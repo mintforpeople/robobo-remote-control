@@ -1,16 +1,18 @@
 package com.mytechia.robobo.framework.remote_control.gozirra;
 
 import android.content.res.AssetManager;
+import android.util.Log;
 
-import com.hi3project.vineyard.comm.stomp.gozirraws.Client;
+import com.hi3project.vineyard.comm.stomp.gozirraws.Authenticator;
 import com.hi3project.vineyard.comm.stomp.gozirraws.Listener;
 import com.hi3project.vineyard.comm.stomp.gozirraws.Server;
 import com.hi3project.vineyard.comm.stomp.gozirraws.Stomp;
 import com.mytechia.commons.framework.exception.InternalErrorException;
 import com.mytechia.robobo.framework.RoboboManager;
+import com.mytechia.robobo.framework.remote_control.ARemoteControlModule;
+import com.mytechia.robobo.framework.remote_control.Command;
+import com.mytechia.robobo.framework.remote_control.GsonConverter;
 import com.mytechia.robobo.framework.remote_control.ICommandExecutor;
-import com.mytechia.robobo.framework.remote_control.IRemoteControlModule;
-import com.mytechia.robobo.framework.remote_control.JsonConverter;
 import com.mytechia.robobo.framework.remote_control.Response;
 import com.mytechia.robobo.framework.remote_control.Status;
 
@@ -41,17 +43,20 @@ import javax.security.auth.login.LoginException;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-public class IGozirraRemoteControlModule implements IRemoteControlModule, Listener {
+public class GozirraRemoteControlModule extends ARemoteControlModule{
 
     private HashMap<String,ICommandExecutor> commands;
     private Server server;
     private Stomp client;
     private int port;
+    private String TAG = "GOZIRRA";
 
     @Override
     public void startup(RoboboManager manager) throws InternalErrorException {
         Properties properties = new Properties();
         AssetManager assetManager = manager.getApplicationContext().getAssets();
+        GozirraRemoteControlModule modulo = this;
+        commands = new HashMap<>();
 
         try {
             InputStream inputStream = assetManager.open("remote.properties");
@@ -64,17 +69,55 @@ public class IGozirraRemoteControlModule implements IRemoteControlModule, Listen
 
         try {
             server = new Server(port);
-            client = new Client("localhost",port,"ser","ser");
+            new Server(port, new Authenticator() {
+                @Override
+                public Object connect(String user, String pass) throws LoginException {
+                    return null;
+                }
+
+                @Override
+                public boolean authorizeSend(Object token, String channel) {
+                    return false;
+                }
+
+                @Override
+                public boolean authorizeSubscribe(Object token, String channel) {
+                    return false;
+                }
+            });
+
+            client = server.getClient();
 
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (LoginException e) {
-            e.printStackTrace();;
         }
-        client.subscribe("/commands");
-        client.subscribe("/status");
-        client.subscribe("/responses");
-
+        client.subscribe("/commands",new Listener() {
+            public void message( Map header, String body ) {
+                Log.d(TAG, header.toString());
+                Log.d(TAG,body);
+                Command c = GsonConverter.jsonToCommand(body);
+                if (commands.containsKey(c.getName())){
+                    commands.get(c.getName()).executeCommand(c,);
+                }
+            }
+        }
+                );
+        client.subscribe("/status",new Listener() {
+            public void message( Map header, String body ) {
+                Log.d(TAG, header.toString());
+                Log.d(TAG,body);
+                notifyStatus(GsonConverter.jsonToStatus(body));
+                Log.d(TAG,body);
+            }
+        });
+        client.subscribe("/responses",new Listener() {
+            public void message( Map header, String body ) {
+                Log.d(TAG, header.toString());
+                Log.d(TAG,body);
+                notifyResponse(GsonConverter.jsonToResponse(body));
+                Log.d(TAG,body);
+            }
+        });
 
     }
 
@@ -100,16 +143,23 @@ public class IGozirraRemoteControlModule implements IRemoteControlModule, Listen
 
     @Override
     public void postStatus(Status status) {
-        client.send("/status",JsonConverter.statusToJson(status));
+        client.send("/status",GsonConverter.statusToJson(status));
     }
 
     @Override
     public void postResponse(Response response) {
-        client.send("/responses",JsonConverter.responseToJson(response));
+        client.send("/responses",GsonConverter.responseToJson(response));
     }
 
     @Override
-    public void message(Map headers, String body) {
-        //TODO Mirar que son los headers
+    public void postTestCommand() {
+        Log.d(TAG,"postTestCommand");
+        HashMap<String,String> par = new HashMap<>();
+        par.put("Test","content");
+        par.put("Test2","content");
+        Command c = new Command("C1",1,par);
+        client.send("/commands",GsonConverter.commandToJson(c));
     }
+
+
 }
