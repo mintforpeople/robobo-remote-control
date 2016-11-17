@@ -29,7 +29,7 @@ public class Command {
     private int id;
     private HashMap<String,String> parameters;
 
-    Command(String name, int id, HashMap<String,String> parameters){
+    public Command(String name, int id, HashMap<String,String> parameters){
         this.id=id;
         this.name = name;
         this.parameters = parameters;
@@ -45,5 +45,9 @@ public class Command {
 
     public HashMap<String, String> getParameters() {
         return parameters;
+    }
+
+    public Response createResponse(){
+        return new Response(id);
     }
 }

@@ -25,7 +25,12 @@ import java.util.Map;
 public class Value {
     private HashMap<String,String> value;
 
+    public Value(){
+        value = new HashMap<>();
+    }
+
     public void putContents(String key, String val){
+
         value.put(key,val);
     }
 

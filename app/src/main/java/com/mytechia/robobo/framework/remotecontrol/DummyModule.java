@@ -2,6 +2,8 @@ package com.mytechia.robobo.framework.remotecontrol;
 
 import com.mytechia.robobo.framework.remote_control.Command;
 import com.mytechia.robobo.framework.remote_control.ICommandExecutor;
+import com.mytechia.robobo.framework.remote_control.IRemoteControlModule;
+import com.mytechia.robobo.framework.remote_control.Response;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
@@ -23,8 +25,24 @@ import com.mytechia.robobo.framework.remote_control.ICommandExecutor;
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 public class DummyModule implements ICommandExecutor{
+    private ITestListener listener;
     @Override
-    public void executeCommand(Command c) {
+    public void executeCommand(Command c, IRemoteControlModule rcmodule) {
+        listener.onThingsHappen(c.getParameters().toString());
+        Response r = (c.createResponse());
 
+
+//        Response r = new Response(1);
+        if (c.getName().equals("C1")){
+            r.putContents("content","C1");
+        }else{
+            r.putContents("content","Other");
+        }
+
+        rcmodule.postResponse(r);
+    }
+
+    public void subscribe(ITestListener listener){
+        this.listener =listener;
     }
 }

@@ -22,7 +22,7 @@ package com.mytechia.robobo.framework.remote_control;
 public class Status extends Value {
     private String name;
 
-    Status(String name){
+    public Status(String name){
         this.name = name;
     }
 

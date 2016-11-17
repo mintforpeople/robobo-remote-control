@@ -1,6 +1,10 @@
 package com.mytechia.robobo.framework.remote_control;
 
+import android.util.Log;
+
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
@@ -22,7 +26,9 @@ import java.util.Map;
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 public final class JsonConverter {
+    private String TAG = "JSONCONVERTER";
     public static String commandToJson(Command com){
+
         /*
         {
           "type:command",
@@ -58,6 +64,14 @@ public final class JsonConverter {
         return output;
     }
     public static Command jsonToCommand(String json){
+
+
+        Pattern pattern = Pattern.compile("name:");
+        Matcher matcher = pattern.matcher(json);
+        if (matcher.find())
+        {
+           Log.d( "JSONCONVERTER",matcher.group(1));
+        }
         return null;
     }
     public static String responseToJson(Response r){

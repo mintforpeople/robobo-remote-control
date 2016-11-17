@@ -1,5 +1,7 @@
 package com.mytechia.robobo.framework.remote_control;
 
+import com.google.gson.Gson;
+
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
  * Copyright 2016 Luis Llamas <luis.llamas@mytechia.com>
@@ -20,4 +22,36 @@ package com.mytechia.robobo.framework.remote_control;
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 public class GsonConverter {
+
+
+
+    public static String commandToJson(Command com){
+        Gson gson = new Gson();
+        return gson.toJson(com);
+
+    };
+    public static Command jsonToCommand(String json){
+        Gson gson = new Gson();
+        return gson.fromJson(json,Command.class);
+
+    };
+    public static String responseToJson(Response r){
+        Gson gson = new Gson();
+
+        return gson.toJson(r);
+    };
+    public static Response jsonToResponse(String json){
+
+        Gson gson = new Gson();
+        return gson.fromJson(json,Response.class);
+
+    };
+    public static String statusToJson(Status st){
+        Gson gson = new Gson();
+        return gson.toJson(st);
+    };
+    public static Status jsonToStatus(String json){
+        Gson gson = new Gson();
+        return gson.fromJson(json,Status.class);
+    };
 }

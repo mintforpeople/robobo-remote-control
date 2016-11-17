@@ -30,4 +30,7 @@ public interface IRemoteControlModule extends IModule {
     void postStatus(Status status);
     void postResponse(Response response);
 
+
+    public void suscribe(IRemoteListener listener);
+    public void unsuscribe(IRemoteListener listener);
 }

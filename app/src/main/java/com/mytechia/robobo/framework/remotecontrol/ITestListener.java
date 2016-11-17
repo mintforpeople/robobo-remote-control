@@ -20,4 +20,5 @@ package com.mytechia.robobo.framework.remotecontrol;
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 public interface ITestListener {
+    void onThingsHappen(String things);
 }

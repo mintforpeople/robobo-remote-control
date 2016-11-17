@@ -55,7 +55,7 @@ public class GozirraRemoteControlModule extends ARemoteControlModule{
     public void startup(RoboboManager manager) throws InternalErrorException {
         Properties properties = new Properties();
         AssetManager assetManager = manager.getApplicationContext().getAssets();
-        GozirraRemoteControlModule modulo = this;
+        final GozirraRemoteControlModule modulo = this;
         commands = new HashMap<>();
 
         try {
@@ -69,22 +69,22 @@ public class GozirraRemoteControlModule extends ARemoteControlModule{
 
         try {
             server = new Server(port);
-            new Server(port, new Authenticator() {
-                @Override
-                public Object connect(String user, String pass) throws LoginException {
-                    return null;
-                }
-
-                @Override
-                public boolean authorizeSend(Object token, String channel) {
-                    return false;
-                }
-
-                @Override
-                public boolean authorizeSubscribe(Object token, String channel) {
-                    return false;
-                }
-            });
+//            new Server(port, new Authenticator() {
+//                @Override
+//                public Object connect(String user, String pass) throws LoginException {
+//                    return null;
+//                }
+//
+//                @Override
+//                public boolean authorizeSend(Object token, String channel) {
+//                    return false;
+//                }
+//
+//                @Override
+//                public boolean authorizeSubscribe(Object token, String channel) {
+//                    return false;
+//                }
+//            });
 
             client = server.getClient();
 
@@ -97,7 +97,7 @@ public class GozirraRemoteControlModule extends ARemoteControlModule{
                 Log.d(TAG,body);
                 Command c = GsonConverter.jsonToCommand(body);
                 if (commands.containsKey(c.getName())){
-                    commands.get(c.getName()).executeCommand(c,);
+                    commands.get(c.getName()).executeCommand(c,modulo);
                 }
             }
         }
@@ -151,7 +151,7 @@ public class GozirraRemoteControlModule extends ARemoteControlModule{
         client.send("/responses",GsonConverter.responseToJson(response));
     }
 
-    @Override
+
     public void postTestCommand() {
         Log.d(TAG,"postTestCommand");
         HashMap<String,String> par = new HashMap<>();

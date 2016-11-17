@@ -21,7 +21,8 @@ package com.mytechia.robobo.framework.remote_control;
  ******************************************************************************/
 public class Response extends Value {
     private int commandId;
-    Response(int id){
+    public Response(int id){
+        super();
         this.commandId = id;
     }
 
