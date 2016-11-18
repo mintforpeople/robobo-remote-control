@@ -60,7 +60,12 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
         Iterator it = connections.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            ((WebSocket)pair.getValue()).send(GsonConverter.statusToJson(status));
+            if (((WebSocket)pair.getValue()).isClosed()){
+
+            }
+            else {
+                ((WebSocket) pair.getValue()).send(GsonConverter.statusToJson(status));
+            }
         }
     }
 
