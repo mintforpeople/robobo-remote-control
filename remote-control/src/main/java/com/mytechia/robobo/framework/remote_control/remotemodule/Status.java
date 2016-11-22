@@ -1,7 +1,4 @@
-package com.mytechia.robobo.framework.remote_control;
-
-import java.util.HashMap;
-import java.util.Map;
+package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
@@ -22,19 +19,14 @@ import java.util.Map;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-public class Value {
-    private HashMap<String,String> value;
+public class Status extends Value {
+    private String name;
 
-    public Value(){
-        value = new HashMap<>();
+    public Status(String name){
+        this.name = name;
     }
 
-    public void putContents(String key, String val){
-
-        value.put(key,val);
-    }
-
-    public HashMap<String, String> getValue() {
-        return value;
+    public String getName() {
+        return name;
     }
 }

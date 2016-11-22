@@ -1,28 +1,25 @@
-package com.mytechia.robobo.framework.remote_control.gozirra;
+package com.mytechia.robobo.framework.remote_control.remotemodule.gozirra;
 
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.hi3project.vineyard.comm.stomp.gozirraws.Authenticator;
 import com.hi3project.vineyard.comm.stomp.gozirraws.Listener;
 import com.hi3project.vineyard.comm.stomp.gozirraws.Server;
 import com.hi3project.vineyard.comm.stomp.gozirraws.Stomp;
 import com.mytechia.commons.framework.exception.InternalErrorException;
 import com.mytechia.robobo.framework.RoboboManager;
-import com.mytechia.robobo.framework.remote_control.ARemoteControlModule;
-import com.mytechia.robobo.framework.remote_control.Command;
-import com.mytechia.robobo.framework.remote_control.GsonConverter;
-import com.mytechia.robobo.framework.remote_control.ICommandExecutor;
-import com.mytechia.robobo.framework.remote_control.Response;
-import com.mytechia.robobo.framework.remote_control.Status;
+import com.mytechia.robobo.framework.remote_control.remotemodule.ARemoteControlModule;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Command;
+import com.mytechia.robobo.framework.remote_control.remotemodule.GsonConverter;
+import com.mytechia.robobo.framework.remote_control.remotemodule.ICommandExecutor;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Response;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.security.auth.login.LoginException;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>

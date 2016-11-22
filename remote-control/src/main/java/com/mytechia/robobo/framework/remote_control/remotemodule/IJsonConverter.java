@@ -1,6 +1,4 @@
-package com.mytechia.robobo.framework.remote_control;
-
-import java.util.HashSet;
+package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
@@ -21,31 +19,11 @@ import java.util.HashSet;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-public abstract class ARemoteControlModule implements IRemoteControlModule {
-    private HashSet<IRemoteListener> listeners = new HashSet<>();
-
-
-    @Override
-    public void suscribe(IRemoteListener listener) {
-        listeners.add(listener);
-    }
-
-    @Override
-    public void unsuscribe(IRemoteListener listener) {
-        listeners.remove(listener);
-    }
-
-    protected void notifyResponse(Response r){
-        for(IRemoteListener listener:listeners){
-            listener.onResponse(r);
-        }
-    }
-
-    protected void notifyStatus(Status s){
-        for(IRemoteListener listener:listeners){
-            listener.onStatus(s);
-        }
-    }
-
-
+public interface IJsonConverter {
+     String commandToJson(Command com);
+    Command jsonToCommand(String json);
+    String responseToJson(Response r);
+    Response jsonToResponse(String json);
+    String statusToJson(Status st);
+    Status jsonToStatus(String json);
 }

@@ -1,9 +1,6 @@
-package com.mytechia.robobo.framework.remote_control.websocket;
+package com.mytechia.robobo.framework.remote_control.remotemodule;
 
-import org.java_websocket.WebSocket;
-
-import java.io.IOException;
-import java.net.Socket;
+import java.util.HashSet;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
@@ -24,23 +21,29 @@ import java.net.Socket;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-public class Connection extends Thread {
-    private WebSocket webSocket;
+public abstract class ARemoteControlModule implements IRemoteControlModule {
+    private HashSet<IRemoteListener> listeners = new HashSet<>();
 
-    private boolean die = false;
 
-    String message = "";
-    public Connection(WebSocket ws){
-        webSocket = ws;
-
+    @Override
+    public void suscribe(IRemoteListener listener) {
+        listeners.add(listener);
     }
 
     @Override
-    public void run() {
-        while (!die) {
+    public void unsuscribe(IRemoteListener listener) {
+        listeners.remove(listener);
+    }
 
+    protected void notifyResponse(Response r){
+        for(IRemoteListener listener:listeners){
+            listener.onResponse(r);
+        }
+    }
 
-            super.run();
+    protected void notifyStatus(Status s){
+        for(IRemoteListener listener:listeners){
+            listener.onStatus(s);
         }
     }
 

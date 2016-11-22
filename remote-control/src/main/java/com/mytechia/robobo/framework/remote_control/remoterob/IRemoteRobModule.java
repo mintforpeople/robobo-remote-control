@@ -1,4 +1,6 @@
-package com.mytechia.robobo.framework.remote_control;
+package com.mytechia.robobo.framework.remote_control.remoterob;
+
+import com.mytechia.robobo.framework.IModule;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
@@ -19,14 +21,5 @@ package com.mytechia.robobo.framework.remote_control;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-public class Status extends Value {
-    private String name;
-
-    public Status(String name){
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
+public interface IRemoteRobModule extends IModule {
 }

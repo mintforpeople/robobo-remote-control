@@ -1,4 +1,4 @@
-package com.mytechia.robobo.framework.remote_control;
+package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
@@ -19,16 +19,7 @@ package com.mytechia.robobo.framework.remote_control;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-public class Response extends Value {
-    private int commandId;
-    public Response(int id){
-        super();
-        this.commandId = id;
-    }
-
-    public int getCommandId() {
-        return commandId;
-    }
-
-
+public interface IRemoteListener {
+    void onResponse(Response r);
+    void onStatus(Status s);
 }

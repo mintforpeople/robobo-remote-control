@@ -1,10 +1,4 @@
-package com.mytechia.robobo.framework.remote_control;
-
-import android.util.Log;
-
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
@@ -25,11 +19,6 @@ import java.util.regex.Pattern;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-public interface IJsonConverter {
-     String commandToJson(Command com);
-    Command jsonToCommand(String json);
-    String responseToJson(Response r);
-    Response jsonToResponse(String json);
-    String statusToJson(Status st);
-    Status jsonToStatus(String json);
+public interface ICommandExecutor {
+    void executeCommand(Command c, IRemoteControlModule rcmodule);
 }

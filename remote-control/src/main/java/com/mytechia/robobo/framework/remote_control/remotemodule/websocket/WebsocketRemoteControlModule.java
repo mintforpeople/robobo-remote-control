@@ -1,24 +1,21 @@
-package com.mytechia.robobo.framework.remote_control.websocket;
+package com.mytechia.robobo.framework.remote_control.remotemodule.websocket;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.mytechia.commons.framework.exception.InternalErrorException;
 import com.mytechia.robobo.framework.RoboboManager;
-import com.mytechia.robobo.framework.remote_control.ARemoteControlModule;
-import com.mytechia.robobo.framework.remote_control.Command;
-import com.mytechia.robobo.framework.remote_control.GsonConverter;
-import com.mytechia.robobo.framework.remote_control.ICommandExecutor;
-import com.mytechia.robobo.framework.remote_control.Response;
-import com.mytechia.robobo.framework.remote_control.Status;
+import com.mytechia.robobo.framework.remote_control.remotemodule.ARemoteControlModule;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Command;
+import com.mytechia.robobo.framework.remote_control.remotemodule.GsonConverter;
+import com.mytechia.robobo.framework.remote_control.remotemodule.ICommandExecutor;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Response;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
-import java.awt.font.TextAttribute;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

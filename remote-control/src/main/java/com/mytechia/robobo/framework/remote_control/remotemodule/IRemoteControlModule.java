@@ -1,4 +1,4 @@
-package com.mytechia.robobo.framework.remote_control;
+package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 import com.mytechia.robobo.framework.IModule;
 

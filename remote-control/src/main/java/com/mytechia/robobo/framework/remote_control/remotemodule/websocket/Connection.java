@@ -1,6 +1,6 @@
-package com.mytechia.robobo.framework.remote_control;
+package com.mytechia.robobo.framework.remote_control.remotemodule.websocket;
 
-import com.google.gson.Gson;
+import org.java_websocket.WebSocket;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
@@ -21,37 +21,25 @@ import com.google.gson.Gson;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-public class GsonConverter {
+public class Connection extends Thread {
+    private WebSocket webSocket;
+
+    private boolean die = false;
+
+    String message = "";
+    public Connection(WebSocket ws){
+        webSocket = ws;
+
+    }
+
+    @Override
+    public void run() {
+        while (!die) {
 
 
+            super.run();
+        }
+    }
 
-    public static String commandToJson(Command com){
-        Gson gson = new Gson();
-        return gson.toJson(com);
 
-    };
-    public static Command jsonToCommand(String json){
-        Gson gson = new Gson();
-        return gson.fromJson(json,Command.class);
-
-    };
-    public static String responseToJson(Response r){
-        Gson gson = new Gson();
-
-        return gson.toJson(r);
-    };
-    public static Response jsonToResponse(String json){
-
-        Gson gson = new Gson();
-        return gson.fromJson(json,Response.class);
-
-    };
-    public static String statusToJson(Status st){
-        Gson gson = new Gson();
-        return gson.toJson(st);
-    };
-    public static Status jsonToStatus(String json){
-        Gson gson = new Gson();
-        return gson.fromJson(json,Status.class);
-    };
 }
