@@ -87,7 +87,7 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
         commands = new HashMap<>();
 
 
-            int port = 22226;
+            int port = 40404;
 
 
             wsServer = new WebSocketServer(new InetSocketAddress(port)) {

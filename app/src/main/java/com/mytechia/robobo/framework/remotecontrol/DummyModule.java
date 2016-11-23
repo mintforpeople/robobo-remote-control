@@ -1,9 +1,9 @@
 package com.mytechia.robobo.framework.remotecontrol;
 
-import com.mytechia.robobo.framework.remote_control.Command;
-import com.mytechia.robobo.framework.remote_control.ICommandExecutor;
-import com.mytechia.robobo.framework.remote_control.IRemoteControlModule;
-import com.mytechia.robobo.framework.remote_control.Response;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Command;
+import com.mytechia.robobo.framework.remote_control.remotemodule.ICommandExecutor;
+import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Response;
 
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
