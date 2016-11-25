@@ -1,5 +1,7 @@
 package com.mytechia.robobo.framework.remote_control.remoterob.implementation;
 
+import android.util.Log;
+
 import com.mytechia.commons.framework.exception.InternalErrorException;
 
 import com.mytechia.robobo.framework.RoboboManager;
@@ -7,6 +9,7 @@ import com.mytechia.robobo.framework.remote_control.remotemodule.Command;
 import com.mytechia.robobo.framework.remote_control.remotemodule.ICommandExecutor;
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
+import com.mytechia.robobo.framework.remote_control.remotemodule.websocket.Connection;
 import com.mytechia.robobo.framework.remote_control.remoterob.IRemoteRobModule;
 import com.mytechia.robobo.rob.BatteryStatus;
 import com.mytechia.robobo.rob.FallStatus;
@@ -50,13 +53,16 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
     private IRemoteControlModule rcmodule;
     private IRob irob;
     private IRobMovementModule movementModule;
+    private String TAG = "RemoteRob";
 
     @Override
     public void startup(RoboboManager manager) throws InternalErrorException {
         rcmodule = manager.getModuleInstance(IRemoteControlModule.class);
         movementModule = manager.getModuleInstance(IRobMovementModule.class);
         irob = manager.getModuleInstance(IRobInterfaceModule.class).getRobInterface();
+
         irob.setOperationMode((byte)1);
+        irob.setRobStatusPeriod(50);
         irob.addRobStatusListener(new IRobStatusListener() {
             @Override
             public void statusMotorsMT(MotorStatus left, MotorStatus right) {
@@ -117,8 +123,37 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                 int speed = Integer.parseInt(par.get("speed"));
 
                 if (wheel.equals("right")){
-
+                    if(speed>0){
+                        //FF
+                        try {
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,(short)0,0,(short)speed,degrees);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        //FR
+                        try {
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE, (short) 0, 0, (short) (speed*-1), degrees);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }else if (wheel.equals("left")){
+                    if(speed>0){
+                        //FF
+                        try {
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,(short)speed,degrees,(short)0,0);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        //FR
+                        try {
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE, (short) (speed*-1), degrees,(short)0,0);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                 }else if (wheel.equals("both")){
                     if (speed>0){
@@ -144,7 +179,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
             public void executeCommand(Command c, IRemoteControlModule rcmodule) {
                 HashMap<String,String> par = c.getParameters();
                 String wheel = par.get("wheel");
-                int time = Integer.parseInt(par.get("time"));
+                int time = Math.round(Float.parseFloat(par.get("time"))*1000);
                 int speed = Integer.parseInt(par.get("speed"));
 
                 if (wheel.equals("right")){
@@ -226,7 +261,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
             @Override
             public void executeCommand(Command c, IRemoteControlModule rcmodule) {
                 HashMap<String,String> par = c.getParameters();
-                int time = Integer.parseInt(par.get("time"));
+                int time = Math.round(Float.parseFloat(par.get("time"))*1000);
                 int lspeed = Integer.parseInt(par.get("lspeed"));
                 int rspeed = Integer.parseInt(par.get("rspeed"));
 

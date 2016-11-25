@@ -182,12 +182,6 @@ public class AndroidSpeechProductionModule implements ISpeechProductionModule {
             }
         });
 
-        roboboManager.getModuleInstance(IRemoteControlModule.class).registerCommand("TALK-2", new ICommandExecutor() {
-            @Override
-            public void executeCommand(Command c, IRemoteControlModule rcmodule) {
-                sayText(c.getParameters().get("text"),PRIORITY_HIGH);
-            }
-        });
 
 
 

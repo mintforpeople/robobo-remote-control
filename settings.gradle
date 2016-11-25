@@ -1,1 +1,1 @@
-include ':app', ':remote-control', ':speech'
+include ':app', ':remote-control', ':speech', ':vision', ':openCVLibrary310', ':emotion-module'

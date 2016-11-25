@@ -12,6 +12,7 @@ import com.mytechia.robobo.framework.remote_control.remotemodule.Response;
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 
 import org.java_websocket.WebSocket;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
@@ -57,11 +58,16 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
         Iterator it = connections.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            if (((WebSocket)pair.getValue()).isClosed()){
+            if ((((WebSocket)pair.getValue()).isClosed())||(((WebSocket)pair.getValue()).isClosed())){
 
             }
             else {
-                ((WebSocket) pair.getValue()).send(GsonConverter.statusToJson(status));
+                try {
+                    ((WebSocket) pair.getValue()).send(GsonConverter.statusToJson(status));
+                }catch (WebsocketNotConnectedException e){
+                    //NOPE
+                }
+
             }
         }
     }
