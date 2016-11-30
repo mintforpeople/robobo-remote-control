@@ -43,10 +43,12 @@ import com.mytechia.robobo.framework.hri.emotion.IEmotionModule;
 import com.mytechia.robobo.framework.hri.emotion.ITouchEventListener;
 import com.mytechia.robobo.framework.hri.emotion.webgl.WebGLEmotionDisplayActivity;
 
+import com.mytechia.robobo.framework.hri.sound.soundDispatcherModule.ISoundDispatcherModule;
 import com.mytechia.robobo.framework.hri.speech.production.ISpeechProductionModule;
 import com.mytechia.robobo.framework.hri.speech.recognition.ISpeechRecognitionListener;
 import com.mytechia.robobo.framework.hri.speech.recognition.ISpeechRecognitionModule;
 
+import com.mytechia.robobo.framework.hri.touch.ITouchModule;
 import com.mytechia.robobo.framework.hri.vision.basicCamera.ICameraModule;
 import com.mytechia.robobo.framework.hri.vision.colorDetection.IColorDetectionModule;
 import com.mytechia.robobo.framework.hri.vision.colorDetection.IColorListener;
@@ -75,7 +77,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class DemoScratchActivity extends Activity{
+public class DemoScratchActivity extends Activity implements ITouchEventListener{
 
     private RoboboServiceHelper roboboHelper;
     private RoboboManager robobo;
@@ -92,6 +94,9 @@ public class DemoScratchActivity extends Activity{
     private ICameraModule cameraModule;
     private IColorDetectionModule colorDetectionModule;
 
+    private ISoundDispatcherModule soundDispatcherModule;
+
+    private ITouchModule touchModule;
 
     private IRobInterfaceModule interfaceModule;
     private IRobMovementModule movementModule;
@@ -183,7 +188,10 @@ public class DemoScratchActivity extends Activity{
                     robobo.getModuleInstance(IFaceDetectionModule.class);
             recognitionModule=
                     robobo.getModuleInstance(ISpeechRecognitionModule.class);
-
+            touchModule=
+                    robobo.getModuleInstance(ITouchModule.class);
+            soundDispatcherModule=
+                    robobo.getModuleInstance(ISoundDispatcherModule.class);
         }
 
         catch(ModuleNotFoundException e) {
@@ -198,7 +206,7 @@ public class DemoScratchActivity extends Activity{
 
         showIpDialog();
 
-
+        soundDispatcherModule.runDispatcher();
 
         Locale spanish = new Locale("es", "ES");
         speechModule.setLocale(spanish);
@@ -210,6 +218,7 @@ public class DemoScratchActivity extends Activity{
         colorDetectionModule.pauseDetection();
         iRob = interfaceModule.getRobInterface();
 
+        emotionModule.subscribeTouchListener(this);
 
 
         try {
@@ -403,10 +412,11 @@ public class DemoScratchActivity extends Activity{
         alertDialog.show();
     }
 
-
-
-
-
+    @Override
+    public void onScreenTouchEvent(MotionEvent event) {
+        Log.d(TAG,"OSTEV");
+        touchModule.feedTouchEvent(event);
+    }
 
 
     private class startInterface extends TimerTask {

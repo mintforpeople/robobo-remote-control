@@ -62,7 +62,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
         irob = manager.getModuleInstance(IRobInterfaceModule.class).getRobInterface();
 
         irob.setOperationMode((byte)1);
-        irob.setRobStatusPeriod(50);
+        irob.setRobStatusPeriod(100);
         irob.addRobStatusListener(new IRobStatusListener() {
             @Override
             public void statusMotorsMT(MotorStatus left, MotorStatus right) {
@@ -81,12 +81,20 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
 
             @Override
             public void statusGaps(Collection<GapStatus> gaps) {
-
+                Status s  = new Status("GAPSTATUS");
+                for (GapStatus status:gaps){
+                    s.putContents(status.getId().toString(),String.valueOf(status.isGap()));
+                }
+                rcmodule.postStatus(s);
             }
 
             @Override
             public void statusFalls(Collection<FallStatus> fall) {
-
+                Status s  = new Status("FALLSTATUS");
+                for (FallStatus status:fall){
+                    s.putContents(status.getId().toString(),String.valueOf(status.isFall()));
+                }
+                rcmodule.postStatus(s);
             }
 
             @Override
@@ -100,7 +108,11 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
 
             @Override
             public void statusBattery(BatteryStatus battery) {
+                Status s  = new Status("BATTLEV");
 
+                    s.putContents("level",String.valueOf(battery.getBattery()));
+
+                rcmodule.postStatus(s);
             }
 
             @Override
