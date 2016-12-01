@@ -1,5 +1,9 @@
 package com.mytechia.robobo.framework.remote_control.remoterob.implementation;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.BatteryManager;
 import android.util.Log;
 
 import com.mytechia.commons.framework.exception.InternalErrorException;
@@ -54,9 +58,11 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
     private IRob irob;
     private IRobMovementModule movementModule;
     private String TAG = "RemoteRob";
+    private Context context;
 
     @Override
     public void startup(RoboboManager manager) throws InternalErrorException {
+        context = manager.getApplicationContext();
         rcmodule = manager.getModuleInstance(IRemoteControlModule.class);
         movementModule = manager.getModuleInstance(IRobMovementModule.class);
         irob = manager.getModuleInstance(IRobInterfaceModule.class).getRobInterface();
@@ -113,6 +119,15 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     s.putContents("level",String.valueOf(battery.getBattery()));
 
                 rcmodule.postStatus(s);
+
+                s  = new Status("OBOBATTLEV");
+
+                s.putContents("level",String.valueOf(getBatteryLevel()));
+
+                rcmodule.postStatus(s);
+
+
+
             }
 
             @Override
@@ -425,5 +440,18 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
     @Override
     public String getModuleVersion() {
         return "v0.1";
+    }
+    public float getBatteryLevel() {
+
+        Intent batteryIntent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        // Error checking that probably isn't needed but I added just in case.
+        if(level == -1 || scale == -1) {
+            return 50.0f;
+        }
+
+        return ((float)level / (float)scale) * 100.0f;
     }
 }
