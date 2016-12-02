@@ -165,6 +165,7 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
     protected void startRoboboApplication() {
 
         roboboHelper.launchDisplayActivity(WebGLEmotionDisplayActivity.class);
+
         t.schedule(new startInterface(),(long)1000);
 
 
@@ -204,6 +205,8 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
             });
         }
 
+        emotionModule.subscribeTouchListener(this);
+
         showIpDialog();
 
         soundDispatcherModule.runDispatcher();
@@ -218,7 +221,7 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
         colorDetectionModule.pauseDetection();
         iRob = interfaceModule.getRobInterface();
 
-        emotionModule.subscribeTouchListener(this);
+
 
 
         try {
@@ -444,6 +447,14 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
     }
 
     //endregion
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        Log.d("WebGlActivity","EVENT");
+
+        return super.onTouchEvent(event);
+    }
 
 
 }

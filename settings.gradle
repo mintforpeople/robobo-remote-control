@@ -1,1 +1,1 @@
-include ':app', ':remote-control', ':speech', ':vision', ':openCVLibrary310', ':emotion-module', ':touch', ':sound'
+include ':app', ':remote-control', ':speech', ':vision', ':openCVLibrary310', ':emotion-module', ':touch', ':sound', ':rob-interface-module', ':robobo-rob-interface'

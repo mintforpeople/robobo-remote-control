@@ -30,6 +30,7 @@ public abstract class ATouchModule implements ITouchModule {
         for (ITouchListener listener:listeners){
             listener.tap(x, y);
         }
+        Log.d(TAG,"-----TAP-----");
         if (rcmodule!=null) {
             Status status = new Status("TAP");
             status.putContents("coordx",x.toString());
