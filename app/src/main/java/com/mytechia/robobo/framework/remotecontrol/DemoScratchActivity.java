@@ -55,6 +55,7 @@ import com.mytechia.robobo.framework.hri.vision.colorDetection.IColorListener;
 import com.mytechia.robobo.framework.hri.vision.faceDetection.IFaceDetectionModule;
 import com.mytechia.robobo.framework.hri.vision.faceDetection.IFaceListener;
 
+import com.mytechia.robobo.framework.sensing.brightness.IBrightnessModule;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
 import com.mytechia.robobo.rob.BluetoothRobInterfaceModule;
 import com.mytechia.robobo.rob.IRob;
@@ -100,6 +101,8 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
 
     private IRobInterfaceModule interfaceModule;
     private IRobMovementModule movementModule;
+
+    private IBrightnessModule brightnessModule;
 
     private IRob iRob;
 
@@ -193,6 +196,8 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
                     robobo.getModuleInstance(ITouchModule.class);
             soundDispatcherModule=
                     robobo.getModuleInstance(ISoundDispatcherModule.class);
+            brightnessModule=
+                    robobo.getModuleInstance(IBrightnessModule.class);
         }
 
         catch(ModuleNotFoundException e) {

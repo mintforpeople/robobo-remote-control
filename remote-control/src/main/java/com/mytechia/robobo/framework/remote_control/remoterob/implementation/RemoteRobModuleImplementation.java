@@ -120,11 +120,11 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
 
                 rcmodule.postStatus(s);
 
-                s  = new Status("OBOBATTLEV");
-
-                s.putContents("level",String.valueOf(getBatteryLevel()));
-
-                rcmodule.postStatus(s);
+//                s  = new Status("OBOBATTLEV");
+//
+//                s.putContents("level",String.valueOf(getBatteryLevel()));
+//
+//                rcmodule.postStatus(s);
 
 
 

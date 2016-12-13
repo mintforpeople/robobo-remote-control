@@ -35,4 +35,5 @@ dependencies {
     compile project(':emotion-module')
     compile project(':touch')
     compile project(':sound')
+    compile project(':sensing')
 }
