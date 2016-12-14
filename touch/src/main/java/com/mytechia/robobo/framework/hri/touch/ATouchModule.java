@@ -51,6 +51,15 @@ public abstract class ATouchModule implements ITouchModule {
         for (ITouchListener listener:listeners){
             listener.fling(dir,angle,time,distance);
         }
+        Log.d(TAG,"-----FLING-----"+Math.toDegrees(angle));
+        if (rcmodule!=null) {
+            Status status = new Status("FLING");
+            status.putContents("angle",Math.toDegrees(angle)+"");
+            status.putContents("time",time+"");
+            status.putContents("distance",distance+"");
+            Log.d(TAG, status.toString());
+            rcmodule.postStatus(status);
+        }
     }
 
     /**

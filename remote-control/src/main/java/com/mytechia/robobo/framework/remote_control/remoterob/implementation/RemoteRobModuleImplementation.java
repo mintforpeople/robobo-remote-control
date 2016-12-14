@@ -31,6 +31,7 @@ import com.mytechia.robobo.util.Color;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 /*******************************************************************************
@@ -72,6 +73,8 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
         irob.addRobStatusListener(new IRobStatusListener() {
             @Override
             public void statusMotorsMT(MotorStatus left, MotorStatus right) {
+                Log.d(TAG,"Left: "+left.getVariationAngle()+" Vel: "+ left.getAngularVelocity()+" Vol: "+ left.getVoltage()
+                        +" Right: "+ right.getVariationAngle()+" Vel: "+ right.getAngularVelocity()+" Vol: "+ right.getVoltage());
 
             }
 
@@ -170,6 +173,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                         //FF
                         try {
                             irob.moveMT(MoveMTMode.FORWARD_FORWARD,(short)speed,degrees,(short)0,0);
+
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
@@ -320,6 +324,86 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                         //RR
                         try {
                             irob.moveMT(MoveMTMode.REVERSE_REVERSE,(short)(lspeed*(-1)),(short)(rspeed*(-1)),time);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            }
+        });
+
+        rcmodule.registerCommand("MOTORSON", new ICommandExecutor() {
+            @Override
+            public void executeCommand(Command c, IRemoteControlModule rcmodule) {
+                HashMap<String,String> par = c.getParameters();
+                String rmotor = par.get("rmotor");
+                String lmotor = par.get("lmotor");
+                int speed = Integer.parseInt(par.get("speed"));
+
+                if (Objects.equals(lmotor, "forward")){
+                    if(Objects.equals(rmotor, "forward")){
+                        //FF
+                        try {
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,(short)speed,(short)speed,Integer.MAX_VALUE);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }else if(Objects.equals(rmotor, "backward")){
+                        //FR
+                        try {
+                            irob.moveMT(MoveMTMode.FORWARD_REVERSE,(short)speed,(short)speed,Integer.MAX_VALUE);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        try {
+                            irob.moveMT(MoveMTMode.FORWARD_REVERSE,(short)speed,(short)0,Integer.MAX_VALUE);
+
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else if (Objects.equals(lmotor, "backward")){
+                    if(Objects.equals(rmotor, "forward")){
+                        //FF
+                        try {
+                            irob.moveMT(MoveMTMode.REVERSE_FORWARD,(short)speed,(short)speed,Integer.MAX_VALUE);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }else if(Objects.equals(rmotor, "backward")){
+                        //FR
+                        try {
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,(short)speed,(short)speed,Integer.MAX_VALUE);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        try {
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,(short)speed,(short)0,Integer.MAX_VALUE);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else {
+                    if(Objects.equals(rmotor, "forward")){
+                        //FF
+                        try {
+                            irob.moveMT(MoveMTMode.REVERSE_FORWARD,(short)0,(short)speed,Integer.MAX_VALUE);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }else if(Objects.equals(rmotor, "backward")){
+                        //FR
+                        try {
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,(short)0,(short)speed,Integer.MAX_VALUE);
+                        } catch (InternalErrorException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        try {
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,(short)0,(short)0,Integer.MAX_VALUE);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
