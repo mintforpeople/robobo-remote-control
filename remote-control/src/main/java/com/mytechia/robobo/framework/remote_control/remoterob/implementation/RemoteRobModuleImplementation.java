@@ -73,8 +73,8 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
         irob.addRobStatusListener(new IRobStatusListener() {
             @Override
             public void statusMotorsMT(MotorStatus left, MotorStatus right) {
-                Log.d(TAG,"Left: "+left.getVariationAngle()+" Vel: "+ left.getAngularVelocity()+" Vol: "+ left.getVoltage()
-                        +" Right: "+ right.getVariationAngle()+" Vel: "+ right.getAngularVelocity()+" Vol: "+ right.getVoltage());
+                //Log.d(TAG,"Left: "+left.getVariationAngle()+" Vel: "+ left.getAngularVelocity()+" Vol: "+ left.getVoltage()
+                //        +" Right: "+ right.getVariationAngle()+" Vel: "+ right.getAngularVelocity()+" Vol: "+ right.getVoltage());
 
             }
 
