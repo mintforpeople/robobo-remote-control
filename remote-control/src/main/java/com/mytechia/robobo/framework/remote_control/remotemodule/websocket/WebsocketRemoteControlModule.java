@@ -17,6 +17,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -46,8 +47,11 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
     private HashMap<String,ICommandExecutor> commands;
     private final WebsocketRemoteControlModule modulo = this;
     private String TAG = "Websocket RC Module";
+    private String password = "passwd";
 
     private HashMap<InetSocketAddress,WebSocket> connections;
+    private HashMap<InetSocketAddress,WebSocket> connectionsAuthenticated;
+
     @Override
     public void registerCommand(String commandName, ICommandExecutor module) {
         commands.put(commandName,module);
@@ -55,27 +59,34 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
 
     @Override
     public void postStatus(Status status) {
-        Iterator it = connections.entrySet().iterator();
+        Map.Entry pair=null;
+        Iterator it = connectionsAuthenticated.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            if ((((WebSocket)pair.getValue()).isClosed())||(((WebSocket)pair.getValue()).isClosed())){
+            try {
+                pair = (Map.Entry) it.next();
+                if ((((WebSocket) pair.getValue()).isClosed()) || (((WebSocket) pair.getValue()).isClosed())) {
 
-            }
-            else {
-                try {
-                    ((WebSocket) pair.getValue()).send(GsonConverter.statusToJson(status));
-                }catch (WebsocketNotConnectedException e){
-                    //NOPE
+                } else {
+                    try {
+                        ((WebSocket) pair.getValue()).send(GsonConverter.statusToJson(status));
+                    } catch (WebsocketNotConnectedException e) {
+                        //NOPER
+                    }
+
                 }
 
+            } catch (ConcurrentModificationException e) {
+                //NOPE
             }
+
         }
+
     }
 
     @Override
     public void postResponse(Response response) {
         Log.d(TAG,"Response: "+response.toString());
-        Iterator it = connections.entrySet().iterator();
+        Iterator it = connectionsAuthenticated.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             String resp = GsonConverter.responseToJson(response);
@@ -90,44 +101,58 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
     public void startup(RoboboManager manager) throws InternalErrorException {
 
         connections = new HashMap<>();
+        connectionsAuthenticated = new HashMap<>();
         commands = new HashMap<>();
 
 
-            int port = 40404;
+        int port = 40404;
 
 
-            wsServer = new WebSocketServer(new InetSocketAddress(port)) {
-                @Override
-                public void onOpen(WebSocket conn, ClientHandshake handshake) {
-                    connections.put(conn.getRemoteSocketAddress(),conn);
-                    //conn.send("Connection Stablished");
-                    Log.d(TAG,"Connection");
+        wsServer = new WebSocketServer(new InetSocketAddress(port)) {
+            @Override
+            public void onOpen(WebSocket conn, ClientHandshake handshake) {
+                connections.put(conn.getRemoteSocketAddress(),conn);
+                //conn.send("Connection Stablished");
+                Log.d(TAG,"Connection");
+            }
+
+            @Override
+            public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+                connections.remove(conn.getRemoteSocketAddress());
+                connectionsAuthenticated.remove(conn.getRemoteSocketAddress());
+                Log.d(TAG,"Close connection");
+            }
+
+            @Override
+            public void onMessage(WebSocket conn, String message) {
+                //conn.send(message);
+                Log.d(TAG, "Message:"+message+"|"+message.substring(10)+"|");
+
+                if (message.startsWith("PASSWORD")){
+                    Log.d(TAG, message);
+                    if (message.substring(10).equals(password)){
+
+                        connectionsAuthenticated.put(conn.getRemoteSocketAddress(),conn);
+
+                        Log.d(TAG,connectionsAuthenticated.toString());
+                    }
+                }else if (connectionsAuthenticated.containsKey(conn.getRemoteSocketAddress())) {
+                    Log.d(TAG, "Message " + message);
+
+                    Command c = GsonConverter.jsonToCommand(message);
+                    if (commands.containsKey(c.getName())) {
+                        commands.get(c.getName()).executeCommand(c, modulo);
+                    }
                 }
 
-                @Override
-                public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-                    connections.remove(conn.getRemoteSocketAddress());
-                    Log.d(TAG,"Close connection");
-                }
 
-                @Override
-                public void onMessage(WebSocket conn, String message) {
-                    //conn.send(message);
-                    Log.d(TAG,"Message "+message);
+            }
 
-                        Command c = GsonConverter.jsonToCommand(message);
-                        if (commands.containsKey(c.getName())) {
-                            commands.get(c.getName()).executeCommand(c, modulo);
-                        }
-
-
-                }
-
-                @Override
-                public void onError(WebSocket conn, Exception ex) {
-                    Log.d(TAG, "On Error: "+ex.getMessage());
-                }
-            };
+            @Override
+            public void onError(WebSocket conn, Exception ex) {
+                Log.d(TAG, "On Error: "+ex.getMessage());
+            }
+        };
 
         wsServer.start();
 
