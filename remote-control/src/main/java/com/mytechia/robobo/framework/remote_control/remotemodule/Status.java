@@ -1,5 +1,3 @@
-package com.mytechia.robobo.framework.remote_control.remotemodule;
-
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
  * Copyright 2016 Luis Llamas <luis.llamas@mytechia.com>
@@ -19,6 +17,8 @@ package com.mytechia.robobo.framework.remote_control.remotemodule;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 /**
  * Class representing a Status

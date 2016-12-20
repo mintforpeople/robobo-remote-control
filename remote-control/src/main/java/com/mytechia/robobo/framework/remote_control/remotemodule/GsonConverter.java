@@ -1,7 +1,3 @@
-package com.mytechia.robobo.framework.remote_control.remotemodule;
-
-import com.google.gson.Gson;
-
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
  * Copyright 2016 Luis Llamas <luis.llamas@mytechia.com>
@@ -21,6 +17,10 @@ import com.google.gson.Gson;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+package com.mytechia.robobo.framework.remote_control.remotemodule;
+
+import com.google.gson.Gson;
+
 
 /**
  * Implementation of the json converter using Google GSON library

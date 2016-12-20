@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../app/app.iml" filepath="$PROJECT_DIR$/../app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../emotion-module/emotion-module.iml" filepath="$PROJECT_DIR$/../emotion-module/emotion-module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../openCVLibrary310/openCVLibrary310.iml" filepath="$PROJECT_DIR$/../openCVLibrary310/openCVLibrary310.iml" />
+      <module fileurl="file://$PROJECT_DIR$/remote-control.iml" filepath="$PROJECT_DIR$/remote-control.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../rob-interface-module/rob-interface-module.iml" filepath="$PROJECT_DIR$/../rob-interface-module/rob-interface-module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../robobo-remote-control.iml" filepath="$PROJECT_DIR$/../robobo-remote-control.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../robobo-rob-interface/robobo-rob-interface.iml" filepath="$PROJECT_DIR$/../robobo-rob-interface/robobo-rob-interface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../sensing/sensing.iml" filepath="$PROJECT_DIR$/../sensing/sensing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../sound/sound.iml" filepath="$PROJECT_DIR$/../sound/sound.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../speech/speech.iml" filepath="$PROJECT_DIR$/../speech/speech.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../touch/touch.iml" filepath="$PROJECT_DIR$/../touch/touch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../vision/vision.iml" filepath="$PROJECT_DIR$/../vision/vision.iml" />
+    </modules>
+  </component>
+</project>

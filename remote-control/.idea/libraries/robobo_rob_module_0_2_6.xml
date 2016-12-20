@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="robobo-rob-module-0.2.6">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/build/intermediates/exploded-aar/com.mytechia/robobo-rob-module/0.2.6/res" />
+      <root url="jar://$PROJECT_DIR$/build/intermediates/exploded-aar/com.mytechia/robobo-rob-module/0.2.6/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mytechia/robobo-rob-module/0.2.6/855ebfeb5575d83b0ebf47195c3369ee2c904420/robobo-rob-module-0.2.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
