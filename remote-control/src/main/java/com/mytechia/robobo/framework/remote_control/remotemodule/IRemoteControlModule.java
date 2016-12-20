@@ -24,15 +24,46 @@ import com.mytechia.robobo.framework.IModule;
  *
  ******************************************************************************/
 
+/**
+ * Public interface of the remote control module
+ */
 public interface IRemoteControlModule extends IModule {
 
+    /**
+     * Register a new command to be detected
+     * @param commandName Name of the command
+     * @param module Executor class for the command
+     */
     void registerCommand(String commandName, ICommandExecutor module);
+
+    /**
+     * Posts a status
+     * @param status The status to be posted
+     */
     void postStatus(Status status);
+
+    /**
+     * Posts a response to a command
+     * @param response The response to be posted
+     */
     void postResponse(Response response);
 
+
+    /**
+     * Sets the password to the remote control system
+     * @param password The password
+     */
     void setPassword(String password);
 
-
+    /**
+     * Suscribes a listener to the remote control notifications
+     * @param listener Listener to be added
+     */
     public void suscribe(IRemoteListener listener);
+
+    /**
+     * Unsuscribes a listener to the remote control notifications
+     * @param listener Listener to be removed
+     */
     public void unsuscribe(IRemoteListener listener);
 }

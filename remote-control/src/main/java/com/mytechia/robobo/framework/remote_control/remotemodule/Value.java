@@ -22,6 +22,10 @@ import java.util.Map;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+/**
+ * Class representing the optional values that can be carried with a command, a status or a response
+ */
 public class Value {
     private HashMap<String,String> value;
 
@@ -29,6 +33,11 @@ public class Value {
         value = new HashMap<>();
     }
 
+    /**
+     * Put new contents on the value containes
+     * @param key The key to be indexed
+     * @param val The value
+     */
     public void putContents(String key, String val){
 
         value.put(key,val);

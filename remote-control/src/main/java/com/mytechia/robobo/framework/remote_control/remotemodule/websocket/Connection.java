@@ -21,6 +21,10 @@ import org.java_websocket.WebSocket;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+/**
+ * Connection class for mannaging websocket connections
+ */
 public class Connection extends Thread {
     private WebSocket webSocket;
 

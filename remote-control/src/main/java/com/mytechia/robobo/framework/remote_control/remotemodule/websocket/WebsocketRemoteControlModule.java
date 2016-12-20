@@ -41,6 +41,12 @@ import java.util.Map;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+/**
+ * Implementation of the IRemoteControlModule with websockets.
+ * This implementatuion creates a websocket server who can be accessed at the port 40404 of
+ * the smartphone IP address
+ */
 public class WebsocketRemoteControlModule extends ARemoteControlModule {
 
     private WebSocketServer wsServer;

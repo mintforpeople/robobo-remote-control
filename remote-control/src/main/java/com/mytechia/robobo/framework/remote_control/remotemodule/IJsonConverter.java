@@ -19,6 +19,10 @@ package com.mytechia.robobo.framework.remote_control.remotemodule;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+/**
+ * Utility class to convert to and from JSON
+ */
 public interface IJsonConverter {
      String commandToJson(Command com);
     Command jsonToCommand(String json);

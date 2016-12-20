@@ -19,7 +19,20 @@ package com.mytechia.robobo.framework.remote_control.remotemodule;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+/**
+ * Remote control listener interface
+ */
 public interface IRemoteListener {
+    /**
+     * Called when a response is received
+     * @param r The response
+     */
     void onResponse(Response r);
+
+    /**
+     * Called when a status is received
+     * @param s The status
+     */
     void onStatus(Status s);
 }

@@ -19,8 +19,17 @@ package com.mytechia.robobo.framework.remote_control.remotemodule;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+/**
+ * Class to represent responses to the commands
+ */
 public class Response extends Value {
     private int commandId;
+
+    /**
+     * Constructor for the response
+     * @param id Id to the original command who triggered the response
+     */
     public Response(int id){
         super();
         this.commandId = id;

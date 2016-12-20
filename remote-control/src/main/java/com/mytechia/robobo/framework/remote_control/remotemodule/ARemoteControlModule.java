@@ -21,6 +21,10 @@ import java.util.HashSet;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+/**
+ * Abstract class that manages listeners and password
+ */
 public abstract class ARemoteControlModule implements IRemoteControlModule {
     private HashSet<IRemoteListener> listeners = new HashSet<>();
     protected String password = "";

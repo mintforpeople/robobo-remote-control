@@ -25,6 +25,10 @@ import java.util.regex.Pattern;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+/**
+ * Implementation of the Json converter
+ */
 public final class JsonConverter {
     private String TAG = "JSONCONVERTER";
     public static String commandToJson(Command com){

@@ -21,6 +21,10 @@ import com.google.gson.Gson;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
+/**
+ * Implementation of the json converter using Google GSON library
+ */
 public class GsonConverter {
 
 

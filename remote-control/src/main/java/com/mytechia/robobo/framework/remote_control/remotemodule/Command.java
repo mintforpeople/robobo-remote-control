@@ -24,11 +24,20 @@ import java.util.HashMap;
  *
  ******************************************************************************/
 
+/**
+ * Represents a remote control command
+ */
 public class Command {
     private String name;
     private int id;
     private HashMap<String,String> parameters;
 
+    /**
+     * Constructor of the class
+     * @param name Command Name
+     * @param id Command Id
+     * @param parameters Map of additional parameters
+     */
     public Command(String name, int id, HashMap<String,String> parameters){
         this.id=id;
         this.name = name;
