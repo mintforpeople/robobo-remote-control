@@ -30,6 +30,8 @@ public interface IRemoteControlModule extends IModule {
     void postStatus(Status status);
     void postResponse(Response response);
 
+    void setPassword(String password);
+
 
     public void suscribe(IRemoteListener listener);
     public void unsuscribe(IRemoteListener listener);

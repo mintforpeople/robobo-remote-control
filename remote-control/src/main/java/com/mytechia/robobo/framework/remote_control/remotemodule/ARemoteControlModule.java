@@ -23,7 +23,12 @@ import java.util.HashSet;
  ******************************************************************************/
 public abstract class ARemoteControlModule implements IRemoteControlModule {
     private HashSet<IRemoteListener> listeners = new HashSet<>();
+    protected String password = "";
 
+    @Override
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     @Override
     public void suscribe(IRemoteListener listener) {

@@ -47,7 +47,7 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
     private HashMap<String,ICommandExecutor> commands;
     private final WebsocketRemoteControlModule modulo = this;
     private String TAG = "Websocket RC Module";
-    private String password = "passwd";
+    //private String password = "passwd";
 
     private HashMap<InetSocketAddress,WebSocket> connections;
     private HashMap<InetSocketAddress,WebSocket> connectionsAuthenticated;
