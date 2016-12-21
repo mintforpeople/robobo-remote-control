@@ -2,6 +2,8 @@
 
 buildscript {
     repositories {
+        mavenLocal()
+        mavenCentral()
         jcenter()
     }
     dependencies {
@@ -14,7 +16,15 @@ buildscript {
 }
 
 allprojects {
+
+
+    version = VERSION_NAME
+
+    group = GROUP
+
     repositories {
+        mavenLocal()
+        mavenCentral()
         jcenter()
     }
 }
