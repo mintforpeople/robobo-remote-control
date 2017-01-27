@@ -56,5 +56,19 @@ public abstract class ARemoteControlModule implements IRemoteControlModule {
         }
     }
 
+    protected void notifyConnection(int connNumber){
+        for(IRemoteListener listener:listeners){
+            listener.onConnection(connNumber);
+        }
+    }
+
+    protected void notifyDisconnection(int connNumber){
+        for(IRemoteListener listener:listeners){
+            listener.onDisconnection(connNumber);
+        }
+    }
+
+
+
 
 }

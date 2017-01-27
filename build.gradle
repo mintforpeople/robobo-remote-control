@@ -5,6 +5,10 @@ buildscript {
         mavenLocal()
         mavenCentral()
         jcenter()
+        maven {
+            url "http://bizancio:7080/nexus/content/repositories/snapshots/"
+        }
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.1'
@@ -26,6 +30,10 @@ allprojects {
         mavenLocal()
         mavenCentral()
         jcenter()
+        maven {
+            url "http://bizancio:7080/nexus/content/repositories/snapshots/"
+        }
+
     }
 }
 

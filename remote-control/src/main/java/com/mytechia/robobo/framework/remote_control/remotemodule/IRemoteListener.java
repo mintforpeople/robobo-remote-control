@@ -34,4 +34,16 @@ public interface IRemoteListener {
      * @param s The status
      */
     void onStatus(Status s);
+
+    /**
+     * Called when a client connects to the module
+     * @param connNumber the number of active connections
+     */
+    void onConnection(int connNumber);
+
+    /**
+     * Called when a client disconnects from the module
+     * @param connNumber the number of active connections
+     */
+    void onDisconnection(int connNumber);
 }

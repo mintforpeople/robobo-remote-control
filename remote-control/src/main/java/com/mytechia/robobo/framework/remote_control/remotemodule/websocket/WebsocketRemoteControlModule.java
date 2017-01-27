@@ -44,7 +44,7 @@ import java.util.Map;
 
 /**
  * Implementation of the IRemoteControlModule with websockets.
- * This implementatuion creates a websocket server who can be accessed at the port 40404 of
+ * This implementation creates a websocket server who can be accessed at the port 40404 of
  * the smartphone IP address
  */
 public class WebsocketRemoteControlModule extends ARemoteControlModule {
@@ -55,11 +55,13 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
     private String TAG = "Websocket RC Module";
     //private String password = "passwd";
 
-    private HashMap<InetSocketAddress,WebSocket> connections;
-    private HashMap<InetSocketAddress,WebSocket> connectionsAuthenticated;
+    private HashMap<Integer,WebSocket> connections;
+    private HashMap<Integer,WebSocket> connectionsAuthenticated;
+
 
     @Override
     public void registerCommand(String commandName, ICommandExecutor module) {
+        Log.d(TAG,"Registering command: "+commandName);
         commands.put(commandName,module);
     }
 
@@ -117,16 +119,26 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
         wsServer = new WebSocketServer(new InetSocketAddress(port)) {
             @Override
             public void onOpen(WebSocket conn, ClientHandshake handshake) {
-                connections.put(conn.getRemoteSocketAddress(),conn);
+                connections.put(conn.hashCode(),conn);
+                notifyConnection(connections.size());
                 //conn.send("Connection Stablished");
-                Log.d(TAG,"Connection");
+                Log.d(TAG,"Connection: "+connections.toString());
+                Log.d(TAG,"Open: "+conn.hashCode());
+
             }
 
             @Override
             public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-                connections.remove(conn.getRemoteSocketAddress());
-                connectionsAuthenticated.remove(conn.getRemoteSocketAddress());
-                Log.d(TAG,"Close connection");
+                connections.remove(conn.hashCode());
+                notifyDisconnection(connections.size());
+
+                Log.d(TAG,"Close: "+conn.hashCode());
+                connectionsAuthenticated.remove(conn.hashCode());
+                //conn.send(GsonConverter.statusToJson(new Status("DIE")));
+
+                Log.d(TAG,connectionsAuthenticated.toString());
+
+                Log.d(TAG,"Close connection: "+conn.hashCode());
             }
 
             @Override
@@ -138,15 +150,22 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
                     Log.d(TAG, message);
                     if (message.substring(10).equals(password)){
 
-                        connectionsAuthenticated.put(conn.getRemoteSocketAddress(),conn);
+                        connectionsAuthenticated.put(conn.hashCode(),conn);
+
 
                         Log.d(TAG,connectionsAuthenticated.toString());
+                    }else{
+
+                        Log.d(TAG, "Incorrect password");
+
+                        conn.send(GsonConverter.statusToJson(new Status("DIE")));
                     }
-                }else if (connectionsAuthenticated.containsKey(conn.getRemoteSocketAddress())) {
+                }else if (connectionsAuthenticated.containsKey(conn.hashCode())) {
                     Log.d(TAG, "Message " + message);
 
                     Command c = GsonConverter.jsonToCommand(message);
                     if (commands.containsKey(c.getName())) {
+                        Log.d(TAG, "Executing command "+c.getName());
                         commands.get(c.getName()).executeCommand(c, modulo);
                     }
                 }

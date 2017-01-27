@@ -30,6 +30,7 @@ import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -38,24 +39,12 @@ import android.view.View;
 import com.mytechia.commons.framework.exception.InternalErrorException;
 import com.mytechia.robobo.framework.RoboboManager;
 import com.mytechia.robobo.framework.exception.ModuleNotFoundException;
-import com.mytechia.robobo.framework.hri.emotion.Emotion;
-import com.mytechia.robobo.framework.hri.emotion.IEmotionModule;
-import com.mytechia.robobo.framework.hri.emotion.ITouchEventListener;
-import com.mytechia.robobo.framework.hri.emotion.webgl.WebGLEmotionDisplayActivity;
 
-import com.mytechia.robobo.framework.hri.sound.soundDispatcherModule.ISoundDispatcherModule;
-import com.mytechia.robobo.framework.hri.speech.production.ISpeechProductionModule;
-import com.mytechia.robobo.framework.hri.speech.recognition.ISpeechRecognitionListener;
-import com.mytechia.robobo.framework.hri.speech.recognition.ISpeechRecognitionModule;
-
-import com.mytechia.robobo.framework.hri.touch.ITouchModule;
-import com.mytechia.robobo.framework.hri.vision.basicCamera.ICameraModule;
-import com.mytechia.robobo.framework.hri.vision.colorDetection.IColorDetectionModule;
-import com.mytechia.robobo.framework.hri.vision.colorDetection.IColorListener;
-import com.mytechia.robobo.framework.hri.vision.faceDetection.IFaceDetectionModule;
-import com.mytechia.robobo.framework.hri.vision.faceDetection.IFaceListener;
-
-import com.mytechia.robobo.framework.sensing.brightness.IBrightnessModule;
+import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
+import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteListener;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Response;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
+import com.mytechia.robobo.framework.remote_control.remoterob.IRemoteRobModule;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
 import com.mytechia.robobo.rob.BluetoothRobInterfaceModule;
 import com.mytechia.robobo.rob.IRob;
@@ -66,7 +55,7 @@ import com.mytechia.robobo.rob.movement.IRobMovementModule;
 import com.mytechia.robobo.rob.util.RoboboDeviceSelectionDialog;
 import com.mytechia.robobo.util.Color;
 
-import org.opencv.core.Mat;
+
 
 import java.sql.Time;
 import java.util.ArrayList;
@@ -78,7 +67,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class DemoScratchActivity extends Activity implements ITouchEventListener{
+public class DemoScratchActivity extends Activity implements IRemoteListener{
 
     private RoboboServiceHelper roboboHelper;
     private RoboboManager robobo;
@@ -87,22 +76,6 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
 
     private String TAG = "PETROBOBO";
 
-    private IEmotionModule emotionModule;
-    private ISpeechProductionModule speechModule;
-
-    private ISpeechRecognitionModule recognitionModule;
-    private IFaceDetectionModule faceDetectionModule;
-    private ICameraModule cameraModule;
-    private IColorDetectionModule colorDetectionModule;
-
-    private ISoundDispatcherModule soundDispatcherModule;
-
-    private ITouchModule touchModule;
-
-    private IRobInterfaceModule interfaceModule;
-    private IRobMovementModule movementModule;
-
-    private IBrightnessModule brightnessModule;
 
     private IRob iRob;
 
@@ -123,14 +96,13 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 //        roboboHelper = new RoboboServiceHelper(this, new RoboboApplication());
 //        roboboHelper.bindRoboboService(new Bundle());
 
         WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
         ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-        showIpDialog();
-
+        //showIpDialog();
+        showRoboboDeviceSelectionDialog();
 
     }
 
@@ -167,74 +139,15 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
 
     protected void startRoboboApplication() {
 
-        roboboHelper.launchDisplayActivity(WebGLEmotionDisplayActivity.class);
+
 
         t.schedule(new startInterface(),(long)1000);
 
-
         try {
-
-            emotionModule =
-                    robobo.getModuleInstance(IEmotionModule.class);
-            speechModule =
-                    robobo.getModuleInstance(ISpeechProductionModule.class);
-
-
-            movementModule=
-                    robobo.getModuleInstance(IRobMovementModule.class);
-            interfaceModule=
-                    robobo.getModuleInstance(IRobInterfaceModule.class);
-            cameraModule=
-                    robobo.getModuleInstance(ICameraModule.class);
-            colorDetectionModule=
-                    robobo.getModuleInstance(IColorDetectionModule.class);
-            faceDetectionModule=
-                    robobo.getModuleInstance(IFaceDetectionModule.class);
-            recognitionModule=
-                    robobo.getModuleInstance(ISpeechRecognitionModule.class);
-            touchModule=
-                    robobo.getModuleInstance(ITouchModule.class);
-            soundDispatcherModule=
-                    robobo.getModuleInstance(ISoundDispatcherModule.class);
-            brightnessModule=
-                    robobo.getModuleInstance(IBrightnessModule.class);
-        }
-
-        catch(ModuleNotFoundException e) {
-            final Exception ex = e;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showErrorDialog(ex.getMessage());
-                }
-            });
-        }
-
-        emotionModule.subscribeTouchListener(this);
-
-        showIpDialog();
-
-        soundDispatcherModule.runDispatcher();
-
-        Locale spanish = new Locale("es", "ES");
-        speechModule.setLocale(spanish);
-        //cameraModule.passOCVthings(emotionModule.getCameraBridgeView());
-
-
-
-
-        colorDetectionModule.pauseDetection();
-        iRob = interfaceModule.getRobInterface();
-
-
-
-
-        try {
-            iRob.setOperationMode((byte) 1);
-        } catch (InternalErrorException e) {
+            robobo.getModuleInstance(IRemoteControlModule.class).suscribe(this);
+        } catch (ModuleNotFoundException e) {
             e.printStackTrace();
         }
-
 
 
 //        try {
@@ -390,7 +303,7 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
     }
 
     private void showIpDialog(){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DemoScratchActivity.this);
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DemoScratchActivity.this);
 
         // set title
         alertDialogBuilder.setTitle("ROBOBO IP");
@@ -409,7 +322,10 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
                 });
 
         // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                //alertDialog.show();
+
 //        alertDialog.getButton(0).setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -417,13 +333,29 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
 //            }
 //        });
         // show it
-        alertDialog.show();
+
     }
 
     @Override
-    public void onScreenTouchEvent(MotionEvent event) {
-        Log.d(TAG,"OSTEV");
-        touchModule.feedTouchEvent(event);
+    public void onResponse(Response r) {
+
+    }
+
+    @Override
+    public void onStatus(Status s) {
+        Log.d(TAG,"onStatus");
+
+    }
+
+    @Override
+    public void onConnection(int connNumber) {
+        Log.d(TAG,"onConnection: "+connNumber);
+    }
+
+    @Override
+    public void onDisconnection(int connNumber) {
+        Log.d(TAG,"onDisconnection: "+connNumber);
+
     }
 
 
@@ -436,11 +368,7 @@ public class DemoScratchActivity extends Activity implements ITouchEventListener
 
                     @Override
                     public void run() {
-                        Log.d(TAG,"PASSOCV");
-                        cameraModule.passOCVthings(emotionModule.getCameraBridgeView());
-                        cameraModule.signalInit();
-                        test = false;
-                        colorDetectionModule.startDetection();
+
 
 
                     }
