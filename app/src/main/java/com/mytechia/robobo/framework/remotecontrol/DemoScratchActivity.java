@@ -224,13 +224,6 @@ public class DemoScratchActivity extends Activity implements IRemoteListener{
 
                 //start the "custom" robobo application
 
-
-
-
-
-
-
-
                 startRoboboApplication();
 
             }
