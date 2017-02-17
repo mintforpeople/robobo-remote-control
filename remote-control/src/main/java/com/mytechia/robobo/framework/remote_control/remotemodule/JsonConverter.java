@@ -58,8 +58,6 @@ public final class JsonConverter {
             String value = entry.getValue();
             output= output+"{\""+key+":"+value+"\"},";
 
-            // do what you have to do here
-            // In your case, an other loop.
         }
         output = output.substring(0, output.length()-1);
         output = output+"]\"}";
@@ -89,8 +87,6 @@ public final class JsonConverter {
             String value = entry.getValue();
             output= output+"{\""+key+":"+value+"\"},";
 
-            // do what you have to do here
-            // In your case, an other loop.
         }
         output = output.substring(0, output.length()-1);
         output = output+"]\"}";

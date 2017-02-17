@@ -16,6 +16,7 @@ import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -93,7 +94,7 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
 
     @Override
     public void postResponse(Response response) {
-        Log.d(TAG,"Response: "+response.toString());
+        //Log.d(TAG,"Response: "+response.toString());
         Iterator it = connectionsAuthenticated.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
@@ -122,7 +123,7 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
                 connections.put(conn.hashCode(),conn);
                 notifyConnection(connections.size());
                 //conn.send("Connection Stablished");
-                Log.d(TAG,"Connection: "+connections.toString());
+                //Log.d(TAG,"Connection: "+connections.toString());
                 Log.d(TAG,"Open: "+conn.hashCode());
 
             }
@@ -136,18 +137,18 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
                 connectionsAuthenticated.remove(conn.hashCode());
                 //conn.send(GsonConverter.statusToJson(new Status("DIE")));
 
-                Log.d(TAG,connectionsAuthenticated.toString());
+                //Log.d(TAG,connectionsAuthenticated.toString());
 
-                Log.d(TAG,"Close connection: "+conn.hashCode());
+                //Log.d(TAG,"Close connection: "+conn.hashCode());
             }
 
             @Override
             public void onMessage(WebSocket conn, String message) {
                 //conn.send(message);
-                Log.d(TAG, "Message:"+message+"|"+message.substring(10)+"|");
+                //Log.d(TAG, "Message:"+message+"|"+message.substring(10)+"|");
 
                 if (message.startsWith("PASSWORD")){
-                    Log.d(TAG, message);
+                    //Log.d(TAG, message);
                     if (message.substring(10).equals(password)){
 
                         connectionsAuthenticated.put(conn.hashCode(),conn);
@@ -157,7 +158,9 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
                     }else{
 
                         Log.d(TAG, "Incorrect password");
-
+                        Status error = new Status("ONERROR");
+                        error.putContents("error","Incorrect password");
+                        conn.send(GsonConverter.statusToJson(error));
                         conn.send(GsonConverter.statusToJson(new Status("DIE")));
                     }
                 }else if (connectionsAuthenticated.containsKey(conn.hashCode())) {
@@ -186,16 +189,29 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
 
     @Override
     public void shutdown() throws InternalErrorException {
+        try {
+            Iterator it = connections.entrySet().iterator();
 
+            while (it.hasNext()){
+                Map.Entry pair = (Map.Entry)it.next();
+                ((WebSocket)pair.getValue()).close();
+            }
+
+            wsServer.stop();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public String getModuleInfo() {
-        return null;
+        return "Remote Control Module";
     }
 
     @Override
     public String getModuleVersion() {
-        return null;
+        return "0.1";
     }
 }

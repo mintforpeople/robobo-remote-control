@@ -149,21 +149,22 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
             public void executeCommand(Command c, IRemoteControlModule rcmodule) {
                 HashMap<String,String> par = c.getParameters();
                 String wheel = par.get("wheel");
-                int degrees = Integer.parseInt(par.get("degrees"));
+                int degrees = Math.abs(Integer.parseInt(par.get("degrees")));
                 int speed = Integer.parseInt(par.get("speed"));
 
                 if (wheel.equals("right")){
                     if(speed>0){
                         //FF
                         try {
-                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,0,0,speed,degrees);
+
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,speed,degrees,0,0);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
                     }else {
                         //FR
                         try {
-                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,  0, 0,  (speed*-1), degrees);
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,  (speed*-1), degrees, 0, 0);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
@@ -172,7 +173,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     if(speed>0){
                         //FF
                         try {
-                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,speed,degrees,0,0);
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,0,0,speed,degrees);
 
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
@@ -180,7 +181,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     }else {
                         //FR
                         try {
-                            irob.moveMT(MoveMTMode.REVERSE_REVERSE, (speed*-1), degrees,0,0);
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,0,0, (speed*-1), degrees);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
@@ -222,7 +223,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                         try {
                             //movementModule.turnRightBackwardsTime(speed,time);
                             //LR
-                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,0,speed,time);
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,speed,0,time);
 
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
@@ -230,7 +231,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     }else {
                         try {
                             //movementModule.turnRightTime((speed*(-1)),time);
-                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,0,(speed*(-1)),time);
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,(speed*(-1)),0,time);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
@@ -240,7 +241,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     if (speed>0){
                         try {
                             //movementModule.turnLeftBackwardsTime(speed,time);
-                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,speed,0,time);
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,0,speed,time);
 
 
                         } catch (InternalErrorException e) {
@@ -248,7 +249,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                         }
                     }else {
                         try {
-                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,(speed*(-1)),0,time);
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,0,(speed*(-1)),time);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
@@ -310,21 +311,21 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     if(rspeed>0){
                         //FF - BIEN
                         try {
-                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,lspeed,rspeed,time);
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,rspeed,lspeed,time);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
                     }else if(rspeed<0){
-                        //FR - MAL INVERTIDO
+                        //FR
                         try {
-                            irob.moveMT(MoveMTMode.FORWARD_REVERSE,lspeed,(rspeed*(-1)),time);
+                            irob.moveMT(MoveMTMode.REVERSE_FORWARD,(rspeed*(-1)),lspeed,time);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
                     }else {
                         //F0
                         try {
-                            irob.moveMT(MoveMTMode.FORWARD_REVERSE,lspeed,0,time);
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,0,lspeed,time);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
@@ -333,21 +334,21 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     if (rspeed > 0) {
                         //RF - MAL INVERTIDO
                         try {
-                            irob.moveMT(MoveMTMode.REVERSE_FORWARD, (lspeed * (-1)), rspeed, time);
+                            irob.moveMT(MoveMTMode.FORWARD_REVERSE, rspeed, (lspeed * (-1)),  time);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
                     } else if (rspeed < 0 ){
                         //RR
                         try {
-                            irob.moveMT(MoveMTMode.REVERSE_REVERSE, (lspeed * (-1)), (rspeed * (-1)), time);
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE,(rspeed * (-1)), (lspeed * (-1)),  time);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
                     }else{
                         //RR
                         try {
-                            irob.moveMT(MoveMTMode.REVERSE_REVERSE, (lspeed * (-1)), 0, time);
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE, 0, (lspeed * (-1)), time);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
@@ -356,14 +357,14 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     if (rspeed > 0) {
                         //RF - MAL INVERTIDO
                         try {
-                            irob.moveMT(MoveMTMode.REVERSE_FORWARD, 0, rspeed, time);
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,rspeed, 0,  time);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
                     } else if (rspeed < 0 ){
                         //RR
                         try {
-                            irob.moveMT(MoveMTMode.REVERSE_REVERSE, 0, (rspeed * (-1)), time);
+                            irob.moveMT(MoveMTMode.REVERSE_REVERSE, (rspeed * (-1)), 0,  time);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
@@ -393,14 +394,14 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     }else if(Objects.equals(rmotor, "backward")){
                         //FR
                         try {
-                            irob.moveMT(MoveMTMode.FORWARD_REVERSE,speed,speed,Integer.MAX_VALUE);
+                            irob.moveMT(MoveMTMode.REVERSE_FORWARD,speed,speed,Integer.MAX_VALUE);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
                     }else {
                         //F0
                         try {
-                            irob.moveMT(MoveMTMode.FORWARD_REVERSE,speed,0,Integer.MAX_VALUE);
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,speed,0,Integer.MAX_VALUE);
 
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
@@ -410,7 +411,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     if(Objects.equals(rmotor, "forward")){
                         //RF
                         try {
-                            irob.moveMT(MoveMTMode.REVERSE_FORWARD,speed,speed,Integer.MAX_VALUE);
+                            irob.moveMT(MoveMTMode.FORWARD_REVERSE,speed,speed,Integer.MAX_VALUE);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
@@ -433,7 +434,7 @@ public class RemoteRobModuleImplementation implements IRemoteRobModule {
                     if(Objects.equals(rmotor, "forward")){
                         //0F
                         try {
-                            irob.moveMT(MoveMTMode.REVERSE_FORWARD,0,speed,Integer.MAX_VALUE);
+                            irob.moveMT(MoveMTMode.FORWARD_FORWARD,0,speed,Integer.MAX_VALUE);
                         } catch (InternalErrorException e) {
                             e.printStackTrace();
                         }
