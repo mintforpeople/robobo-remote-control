@@ -53,6 +53,7 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
     private WebSocketServer wsServer;
     private HashMap<String,ICommandExecutor> commands;
     private final WebsocketRemoteControlModule modulo = this;
+    private RoboboManager m;
     private String TAG = "Websocket RC Module";
     //private String password = "passwd";
 
@@ -62,7 +63,7 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
 
     @Override
     public void registerCommand(String commandName, ICommandExecutor module) {
-        Log.d(TAG,"Registering command: "+commandName);
+        m.log(TAG,"Registering command: "+commandName);
         commands.put(commandName,module);
     }
 
@@ -112,6 +113,7 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
         connections = new HashMap<>();
         connectionsAuthenticated = new HashMap<>();
         commands = new HashMap<>();
+        m = manager;
 
 
         int port = 40404;
@@ -124,7 +126,7 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
                 notifyConnection(connections.size());
                 //conn.send("Connection Stablished");
                 //Log.d(TAG,"Connection: "+connections.toString());
-                Log.d(TAG,"Open: "+conn.hashCode());
+                m.log(TAG,"Open: "+conn.hashCode());
 
             }
 
@@ -133,7 +135,7 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
                 connections.remove(conn.hashCode());
                 notifyDisconnection(connections.size());
 
-                Log.d(TAG,"Close: "+conn.hashCode());
+                m.log(TAG,"Close: "+conn.hashCode());
                 connectionsAuthenticated.remove(conn.hashCode());
                 //conn.send(GsonConverter.statusToJson(new Status("DIE")));
 
@@ -154,21 +156,21 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
                         connectionsAuthenticated.put(conn.hashCode(),conn);
 
 
-                        Log.d(TAG,connectionsAuthenticated.toString());
+                        m.log(TAG,connectionsAuthenticated.toString());
                     }else{
 
-                        Log.d(TAG, "Incorrect password");
+                        m.log(TAG, "Incorrect password");
                         Status error = new Status("ONERROR");
                         error.putContents("error","Incorrect password");
                         conn.send(GsonConverter.statusToJson(error));
                         conn.send(GsonConverter.statusToJson(new Status("DIE")));
                     }
                 }else if (connectionsAuthenticated.containsKey(conn.hashCode())) {
-                    Log.d(TAG, "Message " + message);
+                    m.log(TAG, "Message " + message);
 
                     Command c = GsonConverter.jsonToCommand(message);
                     if (commands.containsKey(c.getName())) {
-                        Log.d(TAG, "Executing command "+c.getName());
+                        m.log(TAG, "Executing command "+c.getName());
                         commands.get(c.getName()).executeCommand(c, modulo);
                     }
                 }
@@ -178,7 +180,7 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
 
             @Override
             public void onError(WebSocket conn, Exception ex) {
-                Log.d(TAG, "On Error: "+ex.getMessage());
+                m.log(TAG, "On Error: "+ex.getMessage());
             }
         };
 
@@ -212,6 +214,6 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
 
     @Override
     public String getModuleVersion() {
-        return "0.1";
+        return "0.2.5";
     }
 }

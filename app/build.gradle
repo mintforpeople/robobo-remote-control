@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
 
 
 }
@@ -29,11 +32,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
     compile project(':remote-control')
-    compile 'com.mytechia:robobo-framework:0.3.5'
-//    compile project(':speech')
-//    compile project(':vision')
-//    compile project(':emotion-module')
-//    compile project(':touch')
-//    compile project(':sound')
-//    compile project(':sensing')
+    compile 'com.mytechia:robobo-framework:1.0.0'
+
 }

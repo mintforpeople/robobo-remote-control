@@ -44,7 +44,6 @@ import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlM
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteListener;
 import com.mytechia.robobo.framework.remote_control.remotemodule.Response;
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
-import com.mytechia.robobo.framework.remote_control.remoterob.IRemoteRobModule;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
 import com.mytechia.robobo.rob.BluetoothRobInterfaceModule;
 import com.mytechia.robobo.rob.IRob;
