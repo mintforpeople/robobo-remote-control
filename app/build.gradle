@@ -33,5 +33,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile project(':remote-control')
     compile 'com.mytechia:robobo-framework:1.0.0'
+    compile ('com.mytechia:robobo-rob-module:0.3.1-SNAPSHOT')
 
 }
