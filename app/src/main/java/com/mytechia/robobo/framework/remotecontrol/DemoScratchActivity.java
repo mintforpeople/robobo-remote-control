@@ -98,8 +98,8 @@ public class DemoScratchActivity extends Activity implements IRemoteListener{
 //        roboboHelper = new RoboboServiceHelper(this, new RoboboApplication());
 //        roboboHelper.bindRoboboService(new Bundle());
 
-        WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-        ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+        //WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+        //ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
         //showIpDialog();
         showRoboboDeviceSelectionDialog();
 

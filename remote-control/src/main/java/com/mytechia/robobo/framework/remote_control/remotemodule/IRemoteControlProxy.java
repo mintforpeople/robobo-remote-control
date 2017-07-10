@@ -1,10 +1,6 @@
-package com.mytechia.robobo.framework.remote_control.remotemodule.websocket;
-
-import org.java_websocket.WebSocket;
-
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
- * Copyright 2016 Luis Llamas <luis.llamas@mytechia.com>
+ * Copyright 2016 Luis Llamas <julio.gomez@mytechia.com>
  * <p>
  * This file is part of Robobo Remote Control Module.
  * <p>
@@ -21,29 +17,14 @@ import org.java_websocket.WebSocket;
  * You should have received a copy of the GNU Lesser General Public License
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-
-/**
- * Connection class for mannaging websocket connections
- */
-public class Connection extends Thread {
-    private WebSocket webSocket;
-
-    private boolean die = false;
-
-    String message = "";
-    public Connection(WebSocket ws){
-        webSocket = ws;
-
-    }
-
-    @Override
-    public void run() {
-        while (!die) {
+package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 
-            super.run();
-        }
-    }
 
+public interface IRemoteControlProxy {
+
+    void notifyStatus(Status status);
+
+    void notifyReponse(Response response);
 
 }

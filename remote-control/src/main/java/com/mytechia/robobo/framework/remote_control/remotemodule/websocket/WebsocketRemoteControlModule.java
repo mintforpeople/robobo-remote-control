@@ -1,31 +1,6 @@
-package com.mytechia.robobo.framework.remote_control.remotemodule.websocket;
-
-import android.util.Log;
-
-import com.mytechia.commons.framework.exception.InternalErrorException;
-import com.mytechia.robobo.framework.RoboboManager;
-import com.mytechia.robobo.framework.remote_control.remotemodule.ARemoteControlModule;
-import com.mytechia.robobo.framework.remote_control.remotemodule.Command;
-import com.mytechia.robobo.framework.remote_control.remotemodule.GsonConverter;
-import com.mytechia.robobo.framework.remote_control.remotemodule.ICommandExecutor;
-import com.mytechia.robobo.framework.remote_control.remotemodule.Response;
-import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
-
-import org.java_websocket.WebSocket;
-import org.java_websocket.exceptions.WebsocketNotConnectedException;
-import org.java_websocket.handshake.ClientHandshake;
-import org.java_websocket.server.WebSocketServer;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
- * Copyright 2016 Luis Llamas <luis.llamas@mytechia.com>
+ * Copyright 2016 Luis Llamas <julio.gomez@mytechia.com>
  * <p>
  * This file is part of Robobo Remote Control Module.
  * <p>
@@ -43,50 +18,81 @@ import java.util.Map;
  * along with Robobo Remote Control Module.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-/**
- * Implementation of the IRemoteControlModule with websockets.
- * This implementation creates a websocket server who can be accessed at the port 40404 of
- * the smartphone IP address
- */
-public class WebsocketRemoteControlModule extends ARemoteControlModule {
+package com.mytechia.robobo.framework.remote_control.remotemodule.websocket;
 
-    private WebSocketServer wsServer;
-    private HashMap<String,ICommandExecutor> commands;
-    private final WebsocketRemoteControlModule modulo = this;
-    private RoboboManager m;
+import android.util.Log;
+
+import com.mytechia.commons.framework.exception.InternalErrorException;
+import com.mytechia.robobo.framework.IModule;
+import com.mytechia.robobo.framework.LogLvl;
+import com.mytechia.robobo.framework.RoboboManager;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Command;
+import com.mytechia.robobo.framework.remote_control.remotemodule.GsonConverter;
+import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
+import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlProxy;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Response;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
+import org.java_websocket.WebSocket;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
+import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.WebSocketServer;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import static java.lang.String.format;
+
+
+
+public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModule {
+
+    public static final String PASSWORD = "PASSWORD";
+
+    private RoboboManager roboboManager;
+
     private String TAG = "Websocket RC Module";
-    //private String password = "passwd";
 
-    private HashMap<Integer,WebSocket> connections;
-    private HashMap<Integer,WebSocket> connectionsAuthenticated;
+    private HashMap<Integer,WebSocket> connections= new HashMap<>();
+
+    private HashMap<Integer,WebSocket> connectionsAuthenticated= new HashMap<>();
+
+    private IRemoteControlModule remoteControlModule;
+
+    private WebSocketServer webSocketServer;
+
+    private int port = 40404;
+
+
+
+    public WebsocketRemoteControlModule() {}
 
 
     @Override
-    public void registerCommand(String commandName, ICommandExecutor module) {
-        m.log(TAG,"Registering command: "+commandName);
-        commands.put(commandName,module);
-    }
+    public void notifyStatus(Status status) {
 
-    @Override
-    public void postStatus(Status status) {
-        Map.Entry pair=null;
-        Iterator it = connectionsAuthenticated.entrySet().iterator();
+        String jsonStatus=GsonConverter.statusToJson(status);
+
+        roboboManager.log(TAG,"Status: "+jsonStatus);
+
+        Iterator<Map.Entry<Integer, WebSocket>> it = connectionsAuthenticated.entrySet().iterator();
+
         while (it.hasNext()) {
+
+            Map.Entry<InetSocketAddress,WebSocket> pair = (Map.Entry) it.next();
+
+            WebSocket webSocket = pair.getValue();
+
+            if(webSocket.isClosed()){
+                continue;
+            }
+
             try {
-                pair = (Map.Entry) it.next();
-                if ((((WebSocket) pair.getValue()).isClosed()) || (((WebSocket) pair.getValue()).isClosed())) {
-
-                } else {
-                    try {
-                        ((WebSocket) pair.getValue()).send(GsonConverter.statusToJson(status));
-                    } catch (WebsocketNotConnectedException e) {
-                        //NOPER
-                    }
-
-                }
-
-            } catch (ConcurrentModificationException e) {
-                //NOPE
+                webSocket.send(jsonStatus);
+            } catch (WebsocketNotConnectedException e) {
+                Log.e(TAG, format("Error notifying status: %s", jsonStatus), e);
+                roboboManager.log(LogLvl.ERROR, TAG, format("Error notifying status: %s", jsonStatus));
             }
 
         }
@@ -94,103 +100,134 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
     }
 
     @Override
-    public void postResponse(Response response) {
-        //Log.d(TAG,"Response: "+response.toString());
-        Iterator it = connectionsAuthenticated.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            String resp = GsonConverter.responseToJson(response);
+    public void notifyReponse(Response response) {
 
-            ((WebSocket)pair.getValue()).send(resp);
+        String jsonResponse = GsonConverter.responseToJson(response);
+
+        roboboManager.log(TAG,"Response: "+jsonResponse);
+
+        Iterator<Map.Entry<Integer, WebSocket>> it = connectionsAuthenticated.entrySet().iterator();
+
+        while (it.hasNext()) {
+
+            Map.Entry<Integer, WebSocket> pair = it.next();
+
+            WebSocket webSocket= pair.getValue();
+
+            if(webSocket.isClosed()){
+                continue;
+            }
+
+            try{
+                webSocket.send(jsonResponse);
+            } catch (WebsocketNotConnectedException e) {
+                Log.e(TAG, format("Error notifying response: %s", jsonResponse), e);
+                roboboManager.log(LogLvl.ERROR, TAG, format("Error notifying response: %s", jsonResponse));
+            }
         }
+
     }
 
 
+    private class WebSocketServerImpl extends  WebSocketServer {
+
+        public WebSocketServerImpl(int port) {
+            super(new InetSocketAddress(port));
+        }
+
+        @Override
+        public void onOpen(WebSocket conn, ClientHandshake handshake) {
+
+            connections.put(conn.hashCode(), conn);
+
+            roboboManager.log(LogLvl.DEBUG, TAG, format("Open websocket connection %s", conn.getRemoteSocketAddress()));
+
+        }
+
+        @Override
+        public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+
+            connections.remove(conn.hashCode());
+
+            connectionsAuthenticated.remove(conn.hashCode());
+
+            roboboManager.log(LogLvl.DEBUG, TAG, format("Closed websocket connection"));
+        }
+
+        @Override
+        public void onMessage(WebSocket webSocketConnection, String message) {
+
+            if(remoteControlModule==null){
+                return;
+            }
+
+            if((message==null) || (message.length()==0)){
+                return;
+            }
+
+            roboboManager.log(LogLvl.TRACE, TAG, format("Received message:%s|%s| from %s", message, message.substring(10), webSocketConnection.getRemoteSocketAddress()));
+
+            if (message.startsWith(PASSWORD)) {
+
+                if (message.substring(10).equals(remoteControlModule.getPassword())) {
+
+                    connectionsAuthenticated.put(webSocketConnection.hashCode(), webSocketConnection);
+
+                    roboboManager.log(LogLvl.DEBUG, TAG, connectionsAuthenticated.toString());
+                }else{
+
+                    roboboManager.log(LogLvl.ERROR, TAG, "Incorrect password");
+
+                    Status statusError= new Status("ONERROR");
+
+                    statusError.putContents("error", "Incorrect password");
+
+                    WebsocketRemoteControlModule.this.notifyStatus(statusError);
+
+                    WebsocketRemoteControlModule.this.notifyStatus(new Status("DIE"));
+
+                }
+            } else if (connectionsAuthenticated.containsKey(webSocketConnection.hashCode())) {
+
+                Command command = GsonConverter.jsonToCommand(message);
+
+                remoteControlModule.queueCommand(command);
+
+            }
+
+
+        }
+
+        @Override
+        public void onError(WebSocket conn, Exception ex) {
+            Log.e(TAG, format("Error WebSocket[local=%s, remote=%s]", conn.getLocalSocketAddress(), conn.getRemoteSocketAddress()), ex);
+            roboboManager.log(LogLvl.ERROR, TAG, format("Error WebSocket[local=%s, remote=%s]", conn.getLocalSocketAddress(), conn.getRemoteSocketAddress()));
+        }
+
+    }
 
     @Override
     public void startup(RoboboManager manager) throws InternalErrorException {
 
-        connections = new HashMap<>();
-        connectionsAuthenticated = new HashMap<>();
-        commands = new HashMap<>();
-        m = manager;
+        this.remoteControlModule=manager.getModuleInstance(IRemoteControlModule.class);
 
+        if(this.remoteControlModule==null){
+            throw new InternalErrorException("No found instance IRemoteControlModule.");
+        }
 
-        int port = 40404;
+        this.roboboManager= manager;
 
+        this.remoteControlModule.registerRemoteControlProxy(this);
 
-        wsServer = new WebSocketServer(new InetSocketAddress(port)) {
-            @Override
-            public void onOpen(WebSocket conn, ClientHandshake handshake) {
-                connections.put(conn.hashCode(),conn);
-                notifyConnection(connections.size());
-                //conn.send("Connection Stablished");
-                //Log.d(TAG,"Connection: "+connections.toString());
-                m.log(TAG,"Open: "+conn.hashCode());
+        this.webSocketServer= new WebSocketServerImpl(port);
 
-            }
-
-            @Override
-            public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-                connections.remove(conn.hashCode());
-                notifyDisconnection(connections.size());
-
-                m.log(TAG,"Close: "+conn.hashCode());
-                connectionsAuthenticated.remove(conn.hashCode());
-                //conn.send(GsonConverter.statusToJson(new Status("DIE")));
-
-                //Log.d(TAG,connectionsAuthenticated.toString());
-
-                //Log.d(TAG,"Close connection: "+conn.hashCode());
-            }
-
-            @Override
-            public void onMessage(WebSocket conn, String message) {
-                //conn.send(message);
-                //Log.d(TAG, "Message:"+message+"|"+message.substring(10)+"|");
-
-                if (message.startsWith("PASSWORD")){
-                    //Log.d(TAG, message);
-                    if (message.substring(10).equals(password)){
-
-                        connectionsAuthenticated.put(conn.hashCode(),conn);
-
-
-                        m.log(TAG,connectionsAuthenticated.toString());
-                    }else{
-
-                        m.log(TAG, "Incorrect password");
-                        Status error = new Status("ONERROR");
-                        error.putContents("error","Incorrect password");
-                        conn.send(GsonConverter.statusToJson(error));
-                        conn.send(GsonConverter.statusToJson(new Status("DIE")));
-                    }
-                }else if (connectionsAuthenticated.containsKey(conn.hashCode())) {
-                    m.log(TAG, "Message " + message);
-
-                    Command c = GsonConverter.jsonToCommand(message);
-                    if (commands.containsKey(c.getName())) {
-                        m.log(TAG, "Executing command "+c.getName());
-                        commands.get(c.getName()).executeCommand(c, modulo);
-                    }
-                }
-
-
-            }
-
-            @Override
-            public void onError(WebSocket conn, Exception ex) {
-                m.log(TAG, "On Error: "+ex.getMessage());
-            }
-        };
-
-        wsServer.start();
-
+        this.webSocketServer.start();
 
     }
 
     @Override
     public void shutdown() throws InternalErrorException {
+
         try {
             Iterator it = connections.entrySet().iterator();
 
@@ -199,21 +236,30 @@ public class WebsocketRemoteControlModule extends ARemoteControlModule {
                 ((WebSocket)pair.getValue()).close();
             }
 
-            wsServer.stop();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            webSocketServer.stop();
+        } catch (IOException ex) {
+            Log.e(TAG, format("Error closing WebSocketServer", ex));
+            roboboManager.log(LogLvl.ERROR, TAG, "Error closing WebSocketServer");
+        } catch (InterruptedException ex) {
+            roboboManager.log(LogLvl.ERROR, TAG, "Error closing WebSocketServer. InterruptedException.");
         }
+    }
+
+    protected void notifyConnection(int connNumber){
+
+    }
+
+    protected void notifyDisconnection(int connNumber){
+
     }
 
     @Override
     public String getModuleInfo() {
-        return "Remote Control Module";
+        return "WebSocket Remote Control Module";
     }
 
     @Override
     public String getModuleVersion() {
-        return "0.2.5";
+        return "0.3.1";
     }
 }
