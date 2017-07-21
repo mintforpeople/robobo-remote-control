@@ -71,7 +71,7 @@ public class CommandQueueProcessor extends Thread {
             try {
                 command = commands.take();
             } catch (InterruptedException e) {
-                Log.e(TAG, format("Error processing command. Interrupted thread: %s", COMMAND_QUEUE_THREAD_NAME), e);
+                Log.w(TAG, format("Error processing command. Interrupted thread: %s", COMMAND_QUEUE_THREAD_NAME), e);
                 return;
             }
 
