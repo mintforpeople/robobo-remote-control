@@ -23,14 +23,14 @@
 
 package com.mytechia.robobo.framework.remote_control.remotemodule.ros.services;
 
-import android.os.Bundle;
+
 
 import com.mytechia.commons.framework.exception.InternalErrorException;
-import com.mytechia.robobo.framework.RoboboManager;
+
 
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
 import com.mytechia.robobo.framework.remote_control.remotemodule.ros.MapperListKeyValueMap;
-import com.mytechia.robobo.framework.remote_control.remotemodule.ros.RosRemoteControlModule;
+
 import com.mytechia.util.NodeNameUtility;
 
 
@@ -42,8 +42,6 @@ import org.ros.node.service.ServiceResponseBuilder;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import com_mytechia_robobo_ros_msgs.Command;
 import com_mytechia_robobo_ros_msgs.CommandRequest;
 import com_mytechia_robobo_ros_msgs.CommandResponse;

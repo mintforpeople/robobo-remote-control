@@ -47,7 +47,7 @@ import org.ros.node.NodeMain;
 /**
  * Created by julio on 11/07/17.
  */
-public class RosRemoteControlModule implements IRemoteControlProxy, IModule {
+public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteControlModule {
 
     private static final String MODULE_INFO = "Ros RC Module";
 
@@ -104,22 +104,38 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IModule {
     }
 
 
-
     private void initRoboRosNodes(IRemoteControlModule remoteControlModule, String roboName) throws InternalErrorException {
 
-       this.statusTopic= this.startRoboRosNode(new StatusTopic(roboName));
+        this.statusTopic=new StatusTopic(roboName);
 
-        this.commandService= this.startRoboRosNode(new CommandService(remoteControlModule, roboName));
+        nodeMainExecutorServiceConnection.startRoboRosNode(this.statusTopic);
 
-       this.responseTopic= this.startRoboRosNode(new ResponseTopic(roboName));
+        this.commandService=new CommandService(remoteControlModule, roboName);
 
+        nodeMainExecutorServiceConnection.startRoboRosNode(this.commandService);
+
+        this.responseTopic= new ResponseTopic(roboName);
+
+        this.nodeMainExecutorServiceConnection.startRoboRosNode(this.responseTopic);
+
+    }
+
+
+    @Override
+    public void startRoboRosNode(NodeMain node){
+        this.nodeMainExecutorServiceConnection.startRoboRosNode(node);
+    }
+
+    @Override
+    public String getRoboboName() {
+        return this.roboName;
     }
 
 
     @Override
     public void shutdown() throws InternalErrorException {
 
-        context.unbindService(nodeMainExecutorServiceConnection);
+        this.context.unbindService(nodeMainExecutorServiceConnection);
 
     }
 
@@ -165,16 +181,6 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IModule {
 
     }
 
-
-    public <T extends NodeMain> T startRoboRosNode(final T roboRosNode){
-
-        if(nodeMainExecutorServiceConnection!=null){
-            nodeMainExecutorServiceConnection.startRoboRosNode(roboRosNode);
-        }
-
-        return roboRosNode;
-
-    }
 
 
     @Override

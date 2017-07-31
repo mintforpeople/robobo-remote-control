@@ -82,11 +82,10 @@ public class StatusTopic extends AbstractNodeMain {
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
+
         super.onStart(connectedNode);
 
         this.statusPublisher = connectedNode.newPublisher(NodeNameUtility.createNodeAction(roboName, TOPIC_ROB_STATUS), Status._TYPE);
-
-
 
     }
 
@@ -105,12 +104,6 @@ public class StatusTopic extends AbstractNodeMain {
         }
 
         Status statusMessage =statusPublisher.newMessage();
-
-        //final Header header = statusMessage.getHeader();
-
-        //header.setFrameId(NAME_NODE_ROB_STATUS);
-
-        //this.setSatusHeaderTimestamp(header);
 
         statusMessage.setName(status.getName());
 

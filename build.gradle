@@ -37,6 +37,10 @@ allprojects {
             url 'https://raw.githubusercontent.com/rosjava/rosjava_mvn_repo/master/'
         }
 
+        flatDir {
+            dirs 'libs'
+        }
+
     }
 }
 
