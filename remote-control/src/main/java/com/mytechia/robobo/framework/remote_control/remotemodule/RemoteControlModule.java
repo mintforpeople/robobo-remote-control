@@ -71,15 +71,19 @@ public class RemoteControlModule implements IRemoteControlModule{
         remoteControlProxies.remove(proxy);
     }
 
-    public void notifyResponse(Response r){
+
+
+    @Override
+    public void notifyConnection(int connNumber){
         for(IRemoteListener listener:listeners){
-            listener.onResponse(r);
+            listener.onConnection(connNumber);
         }
     }
 
-    public void notifyStatus(Status s){
+    @Override
+    public void notifyDisconnection(int connNumber){
         for(IRemoteListener listener:listeners){
-            listener.onStatus(s);
+            listener.onDisconnection(connNumber);
         }
     }
 

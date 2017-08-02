@@ -140,6 +140,8 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
             connections.put(conn.hashCode(), conn);
 
+            notifyConnection(conn.hashCode());
+
             roboboManager.log(LogLvl.DEBUG, TAG, format("Open websocket connection %s", conn.getRemoteSocketAddress()));
 
         }
@@ -150,6 +152,8 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
             connections.remove(conn.hashCode());
 
             connectionsAuthenticated.remove(conn.hashCode());
+
+            notifyDisconnection(conn.hashCode());
 
             roboboManager.log(LogLvl.DEBUG, TAG, format("Closed websocket connection"));
         }
@@ -247,9 +251,17 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
     protected void notifyConnection(int connNumber){
 
+        if(this.remoteControlModule!=null){
+            this.remoteControlModule.notifyConnection(connNumber);
+        }
+
     }
 
     protected void notifyDisconnection(int connNumber){
+
+        if(this.remoteControlModule!=null){
+            this.remoteControlModule.notifyDisconnection(connNumber);
+        }
 
     }
 

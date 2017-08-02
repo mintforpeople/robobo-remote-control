@@ -70,9 +70,9 @@ public interface IRemoteControlModule extends IModule {
 
     void unregisterRemoteControlProxy(IRemoteControlProxy proxy);
 
-    void notifyStatus(Status status);
-
-    void notifyResponse(Response response);
-
     void queueCommand(Command commmand);
+
+    void notifyConnection(int connNumber);
+
+    void notifyDisconnection(int connNumber);
 }
