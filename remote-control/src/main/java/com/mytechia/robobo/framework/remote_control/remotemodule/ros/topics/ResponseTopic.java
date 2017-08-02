@@ -60,7 +60,7 @@ public class ResponseTopic extends AbstractNodeMain {
 
     public ResponseTopic(String roboName){
 
-        if(roboName==null){
+        if(roboName!=null){
             this.roboName= roboName;
         }
 

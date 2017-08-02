@@ -67,7 +67,7 @@ public class StatusTopic extends AbstractNodeMain {
     public StatusTopic(String roboName){
 
 
-        if(roboName==null){
+        if(roboName!=null){
             this.roboName= roboName;
         }
 

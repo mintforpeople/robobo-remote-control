@@ -157,15 +157,13 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
 
         intent.putExtra(NodeMainExecutorService.MASTER_URI, masterUri);
 
-        boolean thisNodeMaster= false;
-
         URL url= new URL(masterUri);
 
         String host= url.getHost();
 
-        if(host.equals("localhost") || host.equals("127.0.0.1")){
-            thisNodeMaster=true;
-        }
+        String localHostAddress = InetAddressFactory.newNonLoopback().getHostAddress();
+
+        boolean thisNodeMaster=(host.equals("localhost") || host.equals("127.0.0.1") || host.equals(localHostAddress));
 
         intent.putExtra(NodeMainExecutorService.ROS_PUBLI_MASTER_NODE, thisNodeMaster);
 
