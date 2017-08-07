@@ -14,8 +14,6 @@
         android:allowBackup="true"
         android:supportsRtl="true">
 
-        <service android:name="com.mytechia.robobo.framework.remote_control.remotemodule.ros.NodeMainExecutorService"/>
-
     </application>
 
 </manifest>

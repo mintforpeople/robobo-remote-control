@@ -29,7 +29,7 @@ package com.mytechia.robobo.framework.remote_control.remotemodule.ros;
 interface NodeMainExecutorServiceListener {
 
 
-    void ontStartup(NodeMainExecutorService service);
+    void ontStartup(AndroidNodeMainExecutor service);
 
-    void onShutdown(NodeMainExecutorService service);
+    void onShutdown(AndroidNodeMainExecutor service);
 }

@@ -1,34 +1,10 @@
-/*******************************************************************************
- *
- *   Copyright 2017 Mytech Ingenieria Aplicada <http://www.mytechia.com>
- *   Copyright 2017 Gervasio Varela <gervasio.varela@mytechia.com>
- *   Copyright 2017 Julio Gomez <julio.gomez@mytechia.com>
- *
- *   This file is part of Robobo Ros Module.
- *
- *   Robobo Ros Module is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU Lesser General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   Robobo Ros Module is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU Lesser General Public License for more details.
- *
- *   You should have received a copy of the GNU Lesser General Public License
- *   along with Robobo Ros Module.  If not, see <http://www.gnu.org/licenses/>.
- *
- ******************************************************************************/
 package com.mytechia.robobo.framework.remote_control.remotemodule.ros;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.mytechia.commons.framework.exception.InternalErrorException;
-import com.mytechia.robobo.framework.IModule;
 import com.mytechia.robobo.framework.RoboboManager;
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlProxy;
@@ -38,15 +14,18 @@ import com.mytechia.robobo.framework.remote_control.remotemodule.ros.services.Co
 import com.mytechia.robobo.framework.remote_control.remotemodule.ros.topics.ResponseTopic;
 import com.mytechia.robobo.framework.remote_control.remotemodule.ros.topics.StatusTopic;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.ros.address.InetAddressFactory;
+import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMain;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
+
 /**
- * Created by julio on 11/07/17.
+ * Created by julio on 7/08/17.
  */
+
 public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteControlModule {
 
     private static final String MODULE_INFO = "Ros RC Module";
@@ -57,13 +36,11 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
 
     public final static String DEFAULT_MASTER_URI = "http://localhost:11311/";
 
-    public static final String MASTER_URI="com.mytehia.ros.master.uri";
+    public static final String MASTER_URI = "com.mytehia.ros.master.uri";
 
     public static final String ROBOBO_NAME="robobo.name";
 
     private Context context;
-
-    private NodeExecutorServiceConnection nodeMainExecutorServiceConnection;
 
     private StatusTopic statusTopic;
 
@@ -74,6 +51,10 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
     private CommandService commandService;
 
     private ResponseTopic responseTopic;
+
+    private NodeConfiguration nodeConfiguration;
+
+    private AndroidNodeMainExecutor nodeMainExecutor;
 
 
     @Override
@@ -87,11 +68,31 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
             throw new InternalErrorException("No found instance IRemoteControlModule.");
         }
 
+
+        this.context = roboboManager.getApplicationContext();
+
+        Bundle roboboBundleOptions = roboboManager.getOptions();
+
+        String masterUri = roboboBundleOptions.getString(MASTER_URI, DEFAULT_MASTER_URI);
+
+        String rosHostName = InetAddressFactory.newNonLoopback().getHostAddress();
+
         try {
-            this.init(roboboManager);
-        } catch (MalformedURLException e) {
-            throw new InternalErrorException(e, "Error startup Ros Remote Control Module");
+            this.nodeMainExecutor = new AndroidNodeMainExecutor(context, masterUri, rosHostName);
+        } catch (URISyntaxException ex) {
+            throw new InternalErrorException(ex, "Error startup Ros Remote Control Module");
         }
+
+        this.nodeConfiguration = NodeConfiguration.newPublic(rosHostName);
+
+        try {
+            this.nodeConfiguration.setMasterUri(new URI(masterUri));
+
+        } catch (URISyntaxException ex) {
+            this.nodeMainExecutor.shutdown();
+            throw new InternalErrorException(ex, "Error startup Ros Remote Control Module");
+        }
+
 
         Bundle roboboOptions = roboboManager.getOptions();
 
@@ -101,29 +102,15 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
 
         this.remoteControlModule.registerRemoteControlProxy(this);
 
-    }
-
-
-    private void initRoboRosNodes(IRemoteControlModule remoteControlModule, String roboName) throws InternalErrorException {
-
-        this.statusTopic=new StatusTopic(roboName);
-
-        nodeMainExecutorServiceConnection.startRoboRosNode(this.statusTopic);
-
-        this.commandService=new CommandService(remoteControlModule, roboName);
-
-        nodeMainExecutorServiceConnection.startRoboRosNode(this.commandService);
-
-        this.responseTopic= new ResponseTopic(roboName);
-
-        this.nodeMainExecutorServiceConnection.startRoboRosNode(this.responseTopic);
 
     }
 
 
     @Override
-    public void startRoboRosNode(NodeMain node){
-        this.nodeMainExecutorServiceConnection.startRoboRosNode(node);
+    public void startRoboRosNode(NodeMain node) {
+        Log.d(TAG, "Starting Ros Node: " + node.getClass().getSimpleName());
+
+        nodeMainExecutor.execute(node, this.nodeConfiguration);
     }
 
     @Override
@@ -135,50 +122,28 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
     @Override
     public void shutdown() throws InternalErrorException {
 
-        this.context.unbindService(nodeMainExecutorServiceConnection);
-
-    }
-
-
-
-
-    private void init(RoboboManager manager) throws MalformedURLException {
-
-
-        this.context= manager.getApplicationContext();
-
-        Intent intent = new Intent(context,  com.mytechia.robobo.framework.remote_control.remotemodule.ros.NodeMainExecutorService.class);
-
-        intent.putExtra(NodeMainExecutorService.ROS_HOST_NAME,  InetAddressFactory.newNonLoopback().getHostAddress());
-
-        Bundle roboboOptions = manager.getOptions();
-
-        String masterUri = roboboOptions.getString(MASTER_URI, DEFAULT_MASTER_URI);
-
-        intent.putExtra(NodeMainExecutorService.MASTER_URI, masterUri);
-
-        URL url= new URL(masterUri);
-
-        String host= url.getHost();
-
-        String localHostAddress = InetAddressFactory.newNonLoopback().getHostAddress();
-
-        boolean thisNodeMaster=(host.equals("localhost") || host.equals("127.0.0.1") || host.equals(localHostAddress));
-
-        intent.putExtra(NodeMainExecutorService.ROS_PUBLI_MASTER_NODE, thisNodeMaster);
-
-        if(!thisNodeMaster) {
-            intent.putExtra(NodeMainExecutorService.ROS_PORT, url.getPort());
+        if (nodeMainExecutor != null) {
+            nodeMainExecutor.shutdown();
         }
 
-        this.context.startService(intent);
-
-        this.nodeMainExecutorServiceConnection = new NodeExecutorServiceConnection();
-
-        this.context.bindService(intent, nodeMainExecutorServiceConnection, Context.BIND_AUTO_CREATE);
-
     }
 
+
+    private void initRoboRosNodes(IRemoteControlModule remoteControlModule, String roboName) throws InternalErrorException {
+
+        this.statusTopic = new StatusTopic(roboName);
+
+        this.startRoboRosNode(this.statusTopic);
+
+        this.commandService = new CommandService(remoteControlModule, roboName);
+
+        this.startRoboRosNode(this.commandService);
+
+        this.responseTopic = new ResponseTopic(roboName);
+
+        this.startRoboRosNode(this.responseTopic);
+
+    }
 
 
     @Override
@@ -200,7 +165,4 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
     public void notifyReponse(Response response) {
         responseTopic.publishResponseMessage(response);
     }
-
-
-
 }
