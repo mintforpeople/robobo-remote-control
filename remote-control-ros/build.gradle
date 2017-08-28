@@ -2,12 +2,12 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 22
         targetSdkVersion 25
-        versionCode 9
+        versionCode 1
         versionName "0.4.0.1-SNAPSHOT"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -22,12 +22,10 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
-
 }
 version = VERSION_NAME
 
 group = GROUP
-
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -35,16 +33,21 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
-
-    compile 'com.mytechia:robobo-framework:1.0.0'
-    compile 'com.google.code.gson:gson:1.7.2'
-
-
-
     testCompile 'junit:junit:4.12'
+    compile project(':remote-control')
+    compile('org.ros.rosjava_core:rosjava:0.3.5') {
+        exclude group: 'junit'
+        exclude group: 'xml-apis'
+        exclude group: 'com.google.code.findbugs'
+    }
+    compile('org.ros.android_core:android_10:0.3.3') {
+        exclude group: 'junit'
+        exclude group: 'xml-apis'
+        exclude group: 'com.google.code.findbugs'
+    }
+
 
 }
-
 
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
 
