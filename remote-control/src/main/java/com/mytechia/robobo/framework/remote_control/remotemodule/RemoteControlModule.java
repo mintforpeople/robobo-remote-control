@@ -22,12 +22,15 @@ package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 import com.mytechia.commons.framework.exception.InternalErrorException;
 import com.mytechia.robobo.framework.RoboboManager;
+import com.mytechia.robobo.framework.power.IPowerModeListener;
+import com.mytechia.robobo.framework.power.PowerMode;
+
 import java.util.HashSet;
 import java.util.Objects;
 
 
 
-public class RemoteControlModule implements IRemoteControlModule{
+public class RemoteControlModule implements IRemoteControlModule {
 
     private HashSet<IRemoteListener> listeners = new HashSet<>();
 
@@ -144,7 +147,7 @@ public class RemoteControlModule implements IRemoteControlModule{
     @Override
     public void startup(RoboboManager manager) throws InternalErrorException {
 
-        commandQueueProcessor= new CommandQueueProcessor(this);
+        commandQueueProcessor= new CommandQueueProcessor(this, manager);
 
         commandQueueProcessor.start();
 
@@ -164,4 +167,7 @@ public class RemoteControlModule implements IRemoteControlModule{
     public String getModuleVersion() {
         return "0.3.1";
     }
+
+
+
 }

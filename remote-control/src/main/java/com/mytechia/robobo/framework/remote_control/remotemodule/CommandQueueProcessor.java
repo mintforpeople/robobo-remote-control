@@ -22,12 +22,19 @@ package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 import static java.lang.String.format;
 import android.util.Log;
+
+import com.mytechia.robobo.framework.LogLvl;
+import com.mytechia.robobo.framework.RoboboManager;
+import com.mytechia.robobo.framework.power.PowerMode;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-
+import java.util.logging.Level;
 
 
 /**
@@ -47,14 +54,24 @@ public class CommandQueueProcessor extends Thread {
     private Object lockCommandsExecutors= new Object();
 
     private IRemoteControlModule module;
+    private RoboboManager roboboManager;
+
+    private long lastCommandReceivedTime = 0;
+    private static final long MAX_TIME_WITHOUT_COMMANDS_TO_SLEEP = 1000*60*1; //1minutes
 
 
 
-    public CommandQueueProcessor(IRemoteControlModule module) {
+    public CommandQueueProcessor(IRemoteControlModule module, RoboboManager roboboManager) {
 
         Objects.requireNonNull(module, "The parameter module is required");
+        Objects.requireNonNull(roboboManager, "The parameter roboboModule is required");
 
         this.module = module;
+        this.roboboManager = roboboManager;
+
+        TimerTask tt = new PeriodicCommandReceptionChecker();
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(tt, MAX_TIME_WITHOUT_COMMANDS_TO_SLEEP, MAX_TIME_WITHOUT_COMMANDS_TO_SLEEP);
     }
 
 
@@ -133,10 +150,31 @@ public class CommandQueueProcessor extends Thread {
         Objects.requireNonNull(command, "The parameter command can not be null");
 
         try {
+
+            this.lastCommandReceivedTime = System.currentTimeMillis();
+            roboboManager.changePowerModeTo(PowerMode.NORMAL);
+
             commands.put(command);
+
         } catch (InterruptedException ex) {
             throw new RuntimeException(format("The command can not be added to the CommandQueueProcessor. Interrupted thread: %s", COMMAND_QUEUE_THREAD_NAME), ex);
         }
     }
+
+
+    private class PeriodicCommandReceptionChecker extends TimerTask {
+
+        @Override
+        public void run() {
+
+            if ((System.currentTimeMillis() - lastCommandReceivedTime) > MAX_TIME_WITHOUT_COMMANDS_TO_SLEEP) {
+                //entering low power mode
+                roboboManager.log(LogLvl.INFO, "REMOTE-MODULE", "Entering low power mode.");
+                roboboManager.changePowerModeTo(PowerMode.LOWPOWER);
+            }
+
+        }
+    }
+
 
 }
