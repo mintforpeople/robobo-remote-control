@@ -72,6 +72,9 @@ public class CommandQueueProcessor extends Thread {
         TimerTask tt = new PeriodicCommandReceptionChecker();
         Timer t = new Timer();
         t.scheduleAtFixedRate(tt, MAX_TIME_WITHOUT_COMMANDS_TO_SLEEP, MAX_TIME_WITHOUT_COMMANDS_TO_SLEEP);
+
+        this.registerCommand("KEEP-ALIVE", new KeepAliveCommandExecutor(roboboManager));
+
     }
 
 
