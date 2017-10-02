@@ -57,7 +57,7 @@ public class CommandQueueProcessor extends Thread {
     private RoboboManager roboboManager;
 
     private long lastCommandReceivedTime = 0;
-    private static final long MAX_TIME_WITHOUT_COMMANDS_TO_SLEEP = 1000*60*1; //1minutes
+    private static final long MAX_TIME_WITHOUT_COMMANDS_TO_SLEEP = 1000*60*3; //3minutes
 
 
 
