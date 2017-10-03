@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 13
-        versionName "0.4.4-lowpower-SNAPSHOT"
+        versionCode 14
+        versionName "1.0.0-SNAPSHOT"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -36,7 +36,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.3.1'
 
-    compile 'com.mytechia:robobo-framework:1.2.0-lowpower-SNAPSHOT'
+    compile 'com.mytechia:robobo-framework:1.3.0-SNAPSHOT'
     compile 'com.google.code.gson:gson:1.7.2'
 
 
