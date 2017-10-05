@@ -86,7 +86,7 @@ public class CommandQueueProcessor extends Thread {
 
         while (!this.isInterrupted()) {
 
-            Command command=null;
+            Command command = null;
 
             try {
                 command = commands.take();
@@ -95,15 +95,25 @@ public class CommandQueueProcessor extends Thread {
                 return;
             }
 
-            ICommandExecutor commandExecutor = this.getCommandExecutor(command.getName());
+            ICommandExecutor commandExecutor = null;
 
-            if(commandExecutor==null){
+            try {
+                commandExecutor = this.getCommandExecutor(command.getName());
+            } catch (Throwable th) {
+                Log.e(TAG, format("Error processing command. Failed to get command", COMMAND_QUEUE_THREAD_NAME), th);
+                continue;
+            }
+
+            if (commandExecutor == null) {
                 Log.e(TAG, format("Error processing command. Not found ICommandExecutor to process Command[id=%s, name=%s]", command.getId(), command.getName()));
                 continue;
             }
 
-            commandExecutor.executeCommand(command, module);
-
+            try {
+                commandExecutor.executeCommand(command, module);
+            } catch (Throwable th) {
+                Log.e(TAG, format("Error processing command [id=%s, name=%s]", command.getId(), command.getName()), th);
+            }
 
         }
 
