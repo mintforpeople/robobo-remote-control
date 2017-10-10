@@ -54,8 +54,10 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
     private String TAG = "Websocket RC Module";
 
+    //all modifications of this collection must be synchronized
     private HashMap<Integer,WebSocket> connections= new HashMap<>();
 
+    //all modifications of this collection must be synchronized
     private HashMap<Integer,WebSocket> connectionsAuthenticated= new HashMap<>();
 
     private IRemoteControlModule remoteControlModule;
@@ -63,6 +65,8 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
     private WebSocketServer webSocketServer;
 
     private int port = 40404;
+
+    private boolean active = false;
 
 
 
@@ -72,27 +76,31 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
     @Override
     public void notifyStatus(Status status) {
 
-        String jsonStatus= GsonConverter.statusToJson(status);
+        if (this.active) {
 
-        roboboManager.log(TAG,"Status: "+jsonStatus);
+            String jsonStatus = GsonConverter.statusToJson(status);
 
-        Iterator<Map.Entry<Integer, WebSocket>> it = connectionsAuthenticated.entrySet().iterator();
+            roboboManager.log(TAG, "Status: " + jsonStatus);
 
-        while (it.hasNext()) {
+            Iterator<Map.Entry<Integer, WebSocket>> it = connectionsAuthenticated.entrySet().iterator();
 
-            Map.Entry<InetSocketAddress,WebSocket> pair = (Map.Entry) it.next();
+            while (it.hasNext()) {
 
-            WebSocket webSocket = pair.getValue();
+                Map.Entry<InetSocketAddress, WebSocket> pair = (Map.Entry) it.next();
 
-            if(webSocket.isClosed()){
-                continue;
-            }
+                WebSocket webSocket = pair.getValue();
 
-            try {
-                webSocket.send(jsonStatus);
-            } catch (WebsocketNotConnectedException e) {
-                Log.e(TAG, format("Error notifying status: %s", jsonStatus), e);
-                roboboManager.log(LogLvl.ERROR, TAG, format("Error notifying status: %s", jsonStatus));
+                if (webSocket.isClosed()) {
+                    continue;
+                }
+
+                try {
+                    webSocket.send(jsonStatus);
+                } catch (WebsocketNotConnectedException e) {
+                    Log.e(TAG, format("Error notifying status: %s", jsonStatus), e);
+                    roboboManager.log(LogLvl.ERROR, TAG, format("Error notifying status: %s", jsonStatus));
+                }
+
             }
 
         }
@@ -102,30 +110,65 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
     @Override
     public void notifyReponse(Response response) {
 
-        String jsonResponse = GsonConverter.responseToJson(response);
+        if (this.active) {
 
-        roboboManager.log(TAG,"Response: "+jsonResponse);
+            String jsonResponse = GsonConverter.responseToJson(response);
 
-        Iterator<Map.Entry<Integer, WebSocket>> it = connectionsAuthenticated.entrySet().iterator();
+            roboboManager.log(TAG, "Response: " + jsonResponse);
 
-        while (it.hasNext()) {
+            Iterator<Map.Entry<Integer, WebSocket>> it = connectionsAuthenticated.entrySet().iterator();
 
-            Map.Entry<Integer, WebSocket> pair = it.next();
+            while (it.hasNext()) {
 
-            WebSocket webSocket= pair.getValue();
+                Map.Entry<Integer, WebSocket> pair = it.next();
 
-            if(webSocket.isClosed()){
-                continue;
+                WebSocket webSocket = pair.getValue();
+
+                if (webSocket.isClosed()) {
+                    continue;
+                }
+
+                try {
+                    webSocket.send(jsonResponse);
+                } catch (WebsocketNotConnectedException e) {
+                    Log.e(TAG, format("Error notifying response: %s", jsonResponse), e);
+                    roboboManager.log(LogLvl.ERROR, TAG, format("Error notifying response: %s", jsonResponse));
+                }
             }
 
-            try{
-                webSocket.send(jsonResponse);
-            } catch (WebsocketNotConnectedException e) {
-                Log.e(TAG, format("Error notifying response: %s", jsonResponse), e);
-                roboboManager.log(LogLvl.ERROR, TAG, format("Error notifying response: %s", jsonResponse));
-            }
         }
 
+    }
+
+
+    private synchronized void putConnection(WebSocket conn) {
+
+        connections.put(conn.hashCode(), conn);
+
+    }
+
+    private synchronized void putAuthenticatedConnection(WebSocket conn) {
+
+        connectionsAuthenticated.put(conn.hashCode(), conn);
+
+    }
+
+
+    private synchronized void removeConnection(WebSocket conn) {
+
+        connections.remove(conn.hashCode());
+
+        connectionsAuthenticated.remove(conn.hashCode());
+
+        if (connections.size() == 0) {
+            setActive(false);
+        }
+
+    }
+
+
+    private void setActive(boolean active) {
+        this.active = active;
     }
 
 
@@ -138,9 +181,11 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
         @Override
         public void onOpen(WebSocket conn, ClientHandshake handshake) {
 
-            connections.put(conn.hashCode(), conn);
+            putConnection(conn);
 
             notifyConnection(conn.hashCode());
+
+            setActive(true);
 
             roboboManager.log(LogLvl.DEBUG, TAG, format("Open websocket connection %s", conn.getRemoteSocketAddress()));
 
@@ -149,9 +194,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
         @Override
         public void onClose(WebSocket conn, int code, String reason, boolean remote) {
 
-            connections.remove(conn.hashCode());
-
-            connectionsAuthenticated.remove(conn.hashCode());
+            removeConnection(conn);
 
             notifyDisconnection(conn.hashCode());
 
@@ -175,7 +218,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
                 if (message.substring(10).equals(remoteControlModule.getPassword())) {
 
-                    connectionsAuthenticated.put(webSocketConnection.hashCode(), webSocketConnection);
+                    putAuthenticatedConnection(webSocketConnection);
 
                     roboboManager.log(LogLvl.DEBUG, TAG, connectionsAuthenticated.toString());
                 }else{
@@ -231,6 +274,8 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
     @Override
     public void shutdown() throws InternalErrorException {
+
+        setActive(false);
 
         try {
             Iterator it = connections.entrySet().iterator();
