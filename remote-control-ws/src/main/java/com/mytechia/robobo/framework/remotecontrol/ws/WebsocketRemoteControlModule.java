@@ -67,6 +67,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
     private int port = 40404;
 
     private boolean active = false;
+    private boolean shuttingDown = false;
 
 
 
@@ -141,7 +142,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
     }
 
 
-    private synchronized void putConnection(WebSocket conn) {
+    private synchronized void putSocketConnection(WebSocket conn) {
 
         connections.put(conn.hashCode(), conn);
 
@@ -154,7 +155,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
     }
 
 
-    private synchronized void removeConnection(WebSocket conn) {
+    private synchronized void removeSocketConnection(WebSocket conn) {
 
         connections.remove(conn.hashCode());
 
@@ -171,6 +172,17 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
         this.active = active;
     }
 
+    private void setShuttingDown(boolean shuttingDown) {
+        this.shuttingDown = shuttingDown;
+        if (isShuttingDown()) {
+            setActive(false);
+        }
+    }
+
+    private boolean isShuttingDown() {
+        return this.shuttingDown;
+    }
+
 
     private class WebSocketServerImpl extends  WebSocketServer {
 
@@ -181,24 +193,30 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
         @Override
         public void onOpen(WebSocket conn, ClientHandshake handshake) {
 
-            putConnection(conn);
+            if (!isShuttingDown()) {
 
-            notifyConnection(conn.hashCode());
+                putSocketConnection(conn);
 
-            setActive(true);
+                notifyConnection(conn.hashCode());
 
-            roboboManager.log(LogLvl.DEBUG, TAG, format("Open websocket connection %s", conn.getRemoteSocketAddress()));
+                setActive(true);
+
+                roboboManager.log(LogLvl.DEBUG, TAG, format("Open websocket connection %s", conn.getRemoteSocketAddress()));
+
+            }
 
         }
 
         @Override
         public void onClose(WebSocket conn, int code, String reason, boolean remote) {
 
-            removeConnection(conn);
+            if (!isShuttingDown()) {
+                removeSocketConnection(conn);
 
-            notifyDisconnection(conn.hashCode());
+                notifyDisconnection(conn.hashCode());
 
-            roboboManager.log(LogLvl.DEBUG, TAG, format("Closed websocket connection"));
+                roboboManager.log(LogLvl.DEBUG, TAG, format("Closed websocket connection"));
+            }
         }
 
         @Override
@@ -275,7 +293,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
     @Override
     public void shutdown() throws InternalErrorException {
 
-        setActive(false);
+        setShuttingDown(true);
 
         try {
             Iterator it = connections.entrySet().iterator();
