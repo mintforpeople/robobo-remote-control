@@ -11,7 +11,7 @@ import org.ros.address.InetAddressFactory;
 import org.ros.concurrent.ListenerGroup;
 import org.ros.concurrent.SignalRunnable;
 import org.ros.exception.RosRuntimeException;
-import org.ros.node.DefaultNodeMainExecutor;
+
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeListener;
 import org.ros.node.NodeMain;
@@ -60,7 +60,7 @@ public class AndroidNodeMainExecutor implements NodeMainExecutor {
 
         super();
 
-        this.nodeMainExecutor = DefaultNodeMainExecutor.newDefault();
+        this.nodeMainExecutor =  RoboboNodeMainExecutor.newDefault();
 
         this.listeners = new ListenerGroup<NodeMainExecutorServiceListener>(nodeMainExecutor.getScheduledExecutorService());
 
@@ -171,6 +171,7 @@ public class AndroidNodeMainExecutor implements NodeMainExecutor {
 
     @Override
     public void execute(NodeMain nodeMain, NodeConfiguration nodeConfiguration) {
+
         this.execute(nodeMain, nodeConfiguration, null);
     }
 
@@ -185,6 +186,7 @@ public class AndroidNodeMainExecutor implements NodeMainExecutor {
         Log.i(TAG, "Shutting down Node Main Executor Service ...");
 
         this.nodeMainExecutor.shutdown();
+
 
         if (rosCore != null) {
             rosCore.shutdown();
