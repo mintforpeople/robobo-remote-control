@@ -52,15 +52,27 @@ public interface IRemoteControlModule extends IModule {
      */
     void setPassword(String password);
 
+    String getPassword();
+
     /**
      * Suscribes a listener to the remote control notifications
      * @param listener Listener to be added
      */
-    public void suscribe(IRemoteListener listener);
+    void suscribe(IRemoteListener listener);
 
     /**
      * Unsuscribes a listener to the remote control notifications
      * @param listener Listener to be removed
      */
-    public void unsuscribe(IRemoteListener listener);
+    void unsuscribe(IRemoteListener listener);
+
+    void registerRemoteControlProxy(IRemoteControlProxy proxy);
+
+    void unregisterRemoteControlProxy(IRemoteControlProxy proxy);
+
+    void queueCommand(Command commmand);
+
+    void notifyConnection(int connNumber);
+
+    void notifyDisconnection(int connNumber);
 }

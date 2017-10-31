@@ -20,6 +20,9 @@
 package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 import com.google.gson.Gson;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Command;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Response;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 
 
 /**

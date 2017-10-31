@@ -13,8 +13,6 @@ import android.widget.TextView;
 import com.mytechia.robobo.framework.RoboboManager;
 import com.mytechia.robobo.framework.exception.ModuleNotFoundException;
 
-
-import com.mytechia.robobo.framework.hri.speech.production.ISpeechProductionModule;
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
@@ -45,7 +43,7 @@ public class SampleActivity extends AppCompatActivity implements ITestListener  
 
         private IRemoteControlModule remoteModule;
 
-    private ISpeechProductionModule productionModule;
+
     private WebSocketClient ws ;
 
 
@@ -128,7 +126,6 @@ public class SampleActivity extends AppCompatActivity implements ITestListener  
         try {
 
             this.remoteModule = this.roboboManager.getModuleInstance(IRemoteControlModule.class);
-            this.productionModule = this.roboboManager.getModuleInstance(ISpeechProductionModule.class);
 
 
         } catch (ModuleNotFoundException e) {

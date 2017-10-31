@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="robobo-rob-interface.robobo-rob-interface">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../robobo-rob-interface/robobo-rob-interface.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
