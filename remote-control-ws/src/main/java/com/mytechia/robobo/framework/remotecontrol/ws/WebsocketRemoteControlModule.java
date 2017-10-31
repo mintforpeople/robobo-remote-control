@@ -243,7 +243,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
                     roboboManager.log(LogLvl.ERROR, TAG, "Incorrect password");
 
-                    Status statusError= new Status("ONERROR");
+                    Status statusError= new Status("ERROR");
 
                     statusError.putContents("error", "Incorrect password");
 
