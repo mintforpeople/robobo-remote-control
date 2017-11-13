@@ -45,7 +45,9 @@ import java.util.Map;
 import static java.lang.String.format;
 
 
-
+/**
+ * Implementation of the remote control module using websockets
+ */
 public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModule {
 
     public static final String PASSWORD = "PASSWORD";

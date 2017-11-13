@@ -29,7 +29,9 @@ import java.util.HashSet;
 import java.util.Objects;
 
 
-
+/**
+ * Implementation of the remote control module
+ */
 public class RemoteControlModule implements IRemoteControlModule {
 
     private HashSet<IRemoteListener> listeners = new HashSet<>();

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
- * Copyright 2016 Luis Llamas <julio.gomez@mytechia.com>
+ * Copyright 2016 Julio Gomez <julio.gomez@mytechia.com>
  * <p>
  * This file is part of Robobo Remote Control Module.
  * <p>
@@ -20,7 +20,9 @@
 package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 
-
+/**
+ * Interface to register different implementations of the remote functionality to the remote module
+ */
 public interface IRemoteControlProxy {
 
     void notifyStatus(Status status);
