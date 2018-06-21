@@ -90,7 +90,6 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
             while (it.hasNext()) {
 
                 Map.Entry<InetSocketAddress, WebSocket> pair = (Map.Entry) it.next();
-
                 WebSocket webSocket = pair.getValue();
 
                 if (webSocket.isClosed()) {
