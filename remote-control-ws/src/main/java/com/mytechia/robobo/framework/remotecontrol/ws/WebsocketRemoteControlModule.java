@@ -20,6 +20,7 @@
 
 package com.mytechia.robobo.framework.remotecontrol.ws;
 
+import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.mytechia.commons.framework.exception.InternalErrorException;
@@ -38,10 +39,13 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
+
 import static java.lang.String.format;
 
 
@@ -66,7 +70,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
     private WebSocketServer webSocketServer;
 
-    private int port = 40404;
+    private int port = 40404; // Loaded with properties
 
     private boolean active = false;
     private boolean shuttingDown = false;
@@ -285,7 +289,16 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
         this.remoteControlModule.registerRemoteControlProxy(this);
 
-        this.webSocketServer= new WebSocketServerImpl(port);
+        AssetManager assetManager = manager.getApplicationContext().getAssets();
+        Properties properties = new Properties();
+        try {
+            InputStream inputStream = assetManager.open("remote.properties");
+            properties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.webSocketServer= new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wsport","40404")));
 
         this.webSocketServer.start();
 
