@@ -43,8 +43,10 @@ public class MoveWheelsService {
                 HashMap<String, String> parameters = new HashMap<>();
                 parameters.put("lspeed", String.valueOf(request.getLspeed().getData()));
                 parameters.put("rspeed", String.valueOf(request.getRspeed().getData()));
-                parameters.put("time", String.valueOf(request.getTime().getData()));
+                int time = request.getTime().getData();
+                parameters.put("time", String.valueOf(time/1000.0));
                 int id = request.getUnlockid().getData();
+                parameters.put("blockid", String.valueOf(id));
 
                 com.mytechia.robobo.framework.remote_control.remotemodule.Command command=
                         new com.mytechia.robobo.framework.remote_control.remotemodule.Command("MOVE-BLOCKING", id, parameters);

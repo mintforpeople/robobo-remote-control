@@ -128,7 +128,7 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
 
         this.remoteControlModule.registerRemoteControlProxy(this);
 
-        roboboManager.changeFrequencyModeTo(FrequencyMode.FAST);
+        roboboManager.changeFrequencyModeTo(FrequencyMode.MAX);
 
     }
 

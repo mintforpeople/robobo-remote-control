@@ -46,9 +46,9 @@ public class FlingStatusTopic extends AStatusTopic {
 
             if (angle!=null && time!=null && distance!= null) {
 
-                msg.getAngle().setData(Short.parseShort(angle));
+                msg.getAngle().setData((short)Float.parseFloat(angle));
                 msg.getTime().setData(Integer.parseInt(time));
-                msg.getDistance().setData(Short.parseShort(distance));
+                msg.getDistance().setData((short) Float.parseFloat(distance));
 
                 this.topic.publish(msg);
 

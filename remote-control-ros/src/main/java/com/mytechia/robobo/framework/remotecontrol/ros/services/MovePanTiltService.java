@@ -45,6 +45,7 @@ public class MovePanTiltService {
                 panParams.put("pos", String.valueOf(request.getPanPos().getData()));
                 panParams.put("speed", String.valueOf(request.getPanSpeed().getData()));
                 int panId = request.getPanUnlockId().getData();
+                panParams.put("blockid", String.valueOf(panId));
 
                 com.mytechia.robobo.framework.remote_control.remotemodule.Command panCommand=
                         new com.mytechia.robobo.framework.remote_control.remotemodule.Command("MOVEPAN-BLOCKING", panId, panParams);
@@ -53,6 +54,7 @@ public class MovePanTiltService {
                 tiltParams.put("pos", String.valueOf(request.getTiltPos().getData()));
                 tiltParams.put("speed", String.valueOf(request.getTiltSpeed().getData()));
                 int tiltId = request.getTiltUnlockId().getData();
+                tiltParams.put("blockid", String.valueOf(tiltId));
 
                 com.mytechia.robobo.framework.remote_control.remotemodule.Command tiltCommand=
                         new com.mytechia.robobo.framework.remote_control.remotemodule.Command("MOVETILT-BLOCKING", tiltId, tiltParams);

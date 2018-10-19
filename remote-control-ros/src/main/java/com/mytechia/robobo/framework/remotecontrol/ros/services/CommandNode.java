@@ -29,24 +29,12 @@ import com.mytechia.commons.framework.exception.InternalErrorException;
 
 
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
-import com.mytechia.robobo.framework.remotecontrol.ros.MapperListKeyValueMap;
 import com.mytechia.robobo.framework.remotecontrol.ros.util.NodeNameUtility;
 
 
-import org.ros.exception.ServiceException;
 import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
-import org.ros.node.service.ServiceResponseBuilder;
-
-import java.util.HashMap;
-import java.util.List;
-import com_mytechia_robobo_ros_msgs.Command;
-import com_mytechia_robobo_ros_msgs.CommandRequest;
-import com_mytechia_robobo_ros_msgs.CommandResponse;
-import com_mytechia_robobo_ros_msgs.KeyValue;
-import robobo_msgs.PlaySoundResponse;
-import robobo_msgs.ResetWheelsResponse;
 
 
 /**

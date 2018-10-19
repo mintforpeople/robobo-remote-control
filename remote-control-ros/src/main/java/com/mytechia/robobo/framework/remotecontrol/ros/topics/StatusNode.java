@@ -23,17 +23,12 @@
 
 package com.mytechia.robobo.framework.remotecontrol.ros.topics;
 
-import com.mytechia.robobo.framework.remotecontrol.ros.MapperListKeyValueMap;
 import com.mytechia.robobo.framework.remotecontrol.ros.util.NodeNameUtility;
 
 
 import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
-import org.ros.node.topic.Publisher;
-
-import com_mytechia_robobo_ros_msgs.Status;
-import robobo_msgs.MoveWheels;
 
 
 /**
@@ -70,10 +65,6 @@ public class StatusNode extends AbstractNodeMain {
     private String roboboName ="";
 
     private ConnectedNode connectedNode;
-
-    private Publisher<Status> statusPublisher;
-
-    private MapperListKeyValueMap mapperListKeyValueMap= new MapperListKeyValueMap();
 
 
     private Int8StatusTopic baseBatteryStatusTopic;
