@@ -30,7 +30,7 @@ package com.mytechia.robobo.framework.remotecontrol.ros.util;
  */
 public class NodeNameUtility {
 
-    private static String prefix = "robobo";
+    private static String prefix = "robot";
 
     public static String createNodeName(String nameRobobo, String nodeName) {
 
@@ -45,9 +45,9 @@ public class NodeNameUtility {
     public static String createNodeAction(String nameRobobo, String nameAction) {
 
         if ((nameRobobo == null) || (nameRobobo.isEmpty())) {
-            return String.format("%s", nameAction);
+            return String.format("%s/%s", prefix, nameAction);
         } else {
-            return String.format("%s_%s/%s", prefix, nameRobobo, nameAction);
+            return String.format("%s/%s/%s", prefix, nameRobobo, nameAction);
         }
 
     }

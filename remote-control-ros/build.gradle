@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 22
         targetSdkVersion 25
-        versionCode 14
-        versionName "1.0.1"
+        versionCode 16
+        versionName "1.2.0-SNAPSHOT"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -32,21 +32,30 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.4.0'
     testCompile 'junit:junit:4.12'
     compile project(':remote-control')
-    compile('org.ros.rosjava_core:rosjava:0.3.5') {
+    implementation('org.ros.rosjava_core:rosjava:0.3.5') {
         exclude group: 'junit'
         exclude group: 'xml-apis'
         exclude group: 'com.google.code.findbugs'
     }
-    compile('org.ros.android_core:android_10:0.3.3') {
+    implementation('org.ros.android_core:android_10:0.3.3') {
         exclude group: 'junit'
         exclude group: 'xml-apis'
         exclude group: 'com.google.code.findbugs'
     }
-
-
+    implementation('org.ros.rosjava_messages:std_msgs:0.5.11') {
+        exclude group: 'junit'
+        exclude group: 'xml-apis'
+        exclude group: 'com.google.code.findbugs'
+    }
+    implementation('org.ros.rosjava_messages:geometry_msgs:1.12.6') {
+        exclude group: 'junit'
+        exclude group: 'xml-apis'
+        exclude group: 'com.google.code.findbugs'
+    }
+    implementation files('libs/robobo_msgs-1.2.0.jar')
 }
 
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

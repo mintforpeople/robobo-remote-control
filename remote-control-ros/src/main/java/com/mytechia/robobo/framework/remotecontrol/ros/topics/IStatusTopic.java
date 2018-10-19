@@ -1,8 +1,7 @@
 /*******************************************************************************
  *
- *   Copyright 2017 Mytech Ingenieria Aplicada <http://www.mytechia.com>
- *   Copyright 2017 Gervasio Varela <gervasio.varela@mytechia.com>
- *   Copyright 2017 Julio Gomez <julio.gomez@mytechia.com>
+ *   Copyright 2018 Mytech Ingenieria Aplicada <http://www.mytechia.com>
+ *   Copyright 2018 Gervasio Varela <gervasio.varela@mytechia.com>
  *
  *   This file is part of Robobo Ros Module.
  *
@@ -20,32 +19,25 @@
  *   along with Robobo Ros Module.  If not, see <http://www.gnu.org/licenses/>.
  *
  ******************************************************************************/
-package com.mytechia.robobo.framework.remotecontrol.ros;
 
-import com.mytechia.robobo.framework.IModule;
+package com.mytechia.robobo.framework.remotecontrol.ros.topics;
 
-import org.ros.node.NodeMain;
+import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 
 /**
- * Public interface of the Robobo ROS node that implements a proxy in ROS for the Robobo Remote
- * Control Protocol
- *
- * The module allows the execution of arbritray ROS-java nodes.
+ * A status topic represent a publish in ROS that is in charge for converting and publishing
+ * a particular type of status messages.
  *
  */
 
-public interface IRosRemoteControlModule extends IModule {
+public interface IStatusTopic {
 
-    /** Executes a new ROS-java 'inside' the robot.
-     *
-     * @param node the new ROS-java node
-     */
-    void startRoboboRosNode(NodeMain node);
+    String getSupportedStatus();
 
-    /** Returns the name of the Robobo robot for multi-robot configurations
-     *
-     * @return the name of the Robobo robot
-     */
-    String getRoboboName();
+    String getTopicName();
+
+    void publishStatus(Status status);
+
+    void start();
 
 }

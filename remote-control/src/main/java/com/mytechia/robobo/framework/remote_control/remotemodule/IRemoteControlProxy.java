@@ -21,12 +21,24 @@ package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 
 /**
- * Interface to register different implementations of the remote functionality to the remote module
+ * Interface that must be implemented by every 'network' implementation of the Robobo Remote Control Protocol.
+ *
+ * This interface provides methods to comunicate status and responses to the clients
+ * connected remotely to a Robobo robot.
+ *
  */
 public interface IRemoteControlProxy {
 
+    /** Tells the proxy to send a status message over the network
+     *
+     * @param status the status message
+     */
     void notifyStatus(Status status);
 
+    /** Tells the proxy to send a repose message over the network
+     *
+     * @param response the response message
+     */
     void notifyReponse(Response response);
 
 }
