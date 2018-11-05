@@ -1,5 +1,7 @@
 package com.mytechia.robobo.framework.remotecontrol.ros.services;
 
+import android.util.Log;
+
 import com.mytechia.robobo.framework.remotecontrol.ros.util.NodeNameUtility;
 
 import org.ros.exception.ServiceException;
@@ -47,6 +49,9 @@ public class MovePanTiltService {
                 int panId = request.getPanUnlockId().getData();
                 panParams.put("blockid", String.valueOf(panId));
 
+
+                Log.i("MOVE-PT", "MovePanMsg: "+panParams.get("pos")+" - "+panParams.get("speed"));
+
                 com.mytechia.robobo.framework.remote_control.remotemodule.Command panCommand=
                         new com.mytechia.robobo.framework.remote_control.remotemodule.Command("MOVEPAN-BLOCKING", panId, panParams);
 
@@ -56,14 +61,16 @@ public class MovePanTiltService {
                 int tiltId = request.getTiltUnlockId().getData();
                 tiltParams.put("blockid", String.valueOf(tiltId));
 
+                Log.i("MOVE-PT", "MovePanMsg: "+tiltParams.get("pos")+" - "+tiltParams.get("speed"));
+
                 com.mytechia.robobo.framework.remote_control.remotemodule.Command tiltCommand=
                         new com.mytechia.robobo.framework.remote_control.remotemodule.Command("MOVETILT-BLOCKING", tiltId, tiltParams);
 
-                if (panId >= 0) {
+                if (panId > 0) {
                     commandNode.getRemoteControlModule().queueCommand(panCommand);
                 }
 
-                if (tiltId >= 0) {
+                if (tiltId > 0) {
                     commandNode.getRemoteControlModule().queueCommand(tiltCommand);
                 }
 
