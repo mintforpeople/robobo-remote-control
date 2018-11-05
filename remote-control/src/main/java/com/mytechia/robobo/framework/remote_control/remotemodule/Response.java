@@ -36,6 +36,10 @@ public class Response extends Value {
         this.commandId = id;
     }
 
+    /**
+     * Gets the original command id
+     * @return command id
+     */
     public int getCommandId() {
         return commandId;
     }

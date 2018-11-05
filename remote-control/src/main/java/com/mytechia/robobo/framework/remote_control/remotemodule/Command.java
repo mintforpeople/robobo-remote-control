@@ -42,10 +42,18 @@ public class Command {
         this.parameters = parameters;
     }
 
+    /**
+     * Gets the command name
+     * @return command name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Gets the id of the command
+     * @return command id
+     */
     public Integer getId() {
         return id;
     }
@@ -54,6 +62,10 @@ public class Command {
         return parameters;
     }
 
+    /**
+     * Creates a new response to the command
+     * @return the response
+     */
     public Response createResponse(){
         return new Response(id);
     }

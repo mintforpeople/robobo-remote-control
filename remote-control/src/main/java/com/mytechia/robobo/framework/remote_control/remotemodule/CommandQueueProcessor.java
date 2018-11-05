@@ -75,10 +75,11 @@ public class CommandQueueProcessor extends Thread {
 
         this.registerCommand("KEEP-ALIVE", new KeepAliveCommandExecutor(roboboManager));
 
+
+        this.registerCommand("SET-SENSOR-FREQUENCY", new SetSensorFrequencyCommandExecutor(roboboManager));
+
+
     }
-
-
-
     @Override
     public void run() {
 

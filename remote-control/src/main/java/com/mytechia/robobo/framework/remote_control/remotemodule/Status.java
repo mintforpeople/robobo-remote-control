@@ -26,10 +26,18 @@ package com.mytechia.robobo.framework.remote_control.remotemodule;
 public class Status extends Value {
     private String name;
 
+    /**
+     * Creates a new status
+     * @param name Status name
+     */
     public Status(String name){
         this.name = name;
     }
 
+    /**
+     * Gets the status name
+     * @return status name
+     */
     public String getName() {
         return name;
     }

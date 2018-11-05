@@ -42,6 +42,10 @@ public class Value {
         value.put(key,val);
     }
 
+    /**
+     * Returns the map of  values
+     * @return the map of values
+     */
     public HashMap<String, String> getValue() {
         return value;
     }

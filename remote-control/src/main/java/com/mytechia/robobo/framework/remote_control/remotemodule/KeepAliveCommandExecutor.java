@@ -35,7 +35,10 @@ public class KeepAliveCommandExecutor implements ICommandExecutor
 
     private RoboboManager roboboManager;
 
-
+    /**
+     * Public constructor of the KeepAliveCommandExecutor
+     * @param roboboManager the current robobo manager
+     */
     public KeepAliveCommandExecutor(RoboboManager roboboManager) {
         super();
         this.roboboManager = roboboManager;

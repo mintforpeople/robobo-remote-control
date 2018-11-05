@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2016 Mytech Ingenieria Aplicada <http://www.mytechia.com>
- * Copyright 2016 Luis Llamas <julio.gomez@mytechia.com>
+ * Copyright 2016 Julio Gomez <julio.gomez@mytechia.com>
  * <p>
  * This file is part of Robobo Remote Control Module.
  * <p>
@@ -20,11 +20,25 @@
 package com.mytechia.robobo.framework.remote_control.remotemodule;
 
 
-
+/**
+ * Interface that must be implemented by every 'network' implementation of the Robobo Remote Control Protocol.
+ *
+ * This interface provides methods to comunicate status and responses to the clients
+ * connected remotely to a Robobo robot.
+ *
+ */
 public interface IRemoteControlProxy {
 
+    /** Tells the proxy to send a status message over the network
+     *
+     * @param status the status message
+     */
     void notifyStatus(Status status);
 
+    /** Tells the proxy to send a repose message over the network
+     *
+     * @param response the response message
+     */
     void notifyReponse(Response response);
 
 }

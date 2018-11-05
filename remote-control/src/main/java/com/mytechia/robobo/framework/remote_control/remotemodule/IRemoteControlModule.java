@@ -66,13 +66,33 @@ public interface IRemoteControlModule extends IModule {
      */
     void unsuscribe(IRemoteListener listener);
 
+    /**
+     * Registers a remote control proxy
+     * @param proxy the proxy to be registered
+     */
     void registerRemoteControlProxy(IRemoteControlProxy proxy);
 
+    /**
+     * Unregisters a remote control proxy
+     * @param proxy the proxy to be unregistered
+     */
     void unregisterRemoteControlProxy(IRemoteControlProxy proxy);
 
+    /**
+     * Adds a command to the queue
+     * @param commmand the command to be queued
+     */
     void queueCommand(Command commmand);
 
+    /**
+     * Notifies the listeners when a connection is established
+     * @param connNumber the current number of connections
+     */
     void notifyConnection(int connNumber);
 
+    /**
+     * Notifies the listeners when some device disconnects
+     * @param connNumber the current number of connections
+     */
     void notifyDisconnection(int connNumber);
 }
