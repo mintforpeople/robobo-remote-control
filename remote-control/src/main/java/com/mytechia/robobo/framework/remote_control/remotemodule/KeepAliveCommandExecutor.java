@@ -24,7 +24,7 @@ import com.mytechia.robobo.framework.RoboboManager;
 import com.mytechia.robobo.framework.power.PowerMode;
 
 /**
- * When this command is received the framwork is forced to NORMAL power mode.
+ * When this command is received the framework is forced to NORMAL power mode.
  *
  * This command is used by remote clients in order to keep the robot from going
  * to LOW-POWER or sleep mode.

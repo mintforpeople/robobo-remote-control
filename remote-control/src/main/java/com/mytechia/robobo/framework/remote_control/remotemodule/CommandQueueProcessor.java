@@ -41,6 +41,9 @@ import java.util.logging.Level;
  * Created by julio on 7/07/17.
  */
 
+/**
+ * Class that manages the execution of the received commands
+ */
 public class CommandQueueProcessor extends Thread {
 
     private static final String COMMAND_QUEUE_THREAD_NAME="Command Queue Processor";
@@ -120,6 +123,11 @@ public class CommandQueueProcessor extends Thread {
 
     }
 
+    /**
+     * Register a command in the command executor list
+     * @param commandName Name of the command
+     * @param module Executor of the command
+     */
     public void registerCommand(String commandName, ICommandExecutor module){
         commandsExecutors.put(commandName, module);
     }
@@ -128,6 +136,11 @@ public class CommandQueueProcessor extends Thread {
         this.interrupt();
     }
 
+    /**
+     * Obtain a command executor by name
+     * @param commandExecutorName Name of the executor
+     * @return The executor
+     */
     private  ICommandExecutor getCommandExecutor(String commandExecutorName){
 
         Objects.requireNonNull(commandExecutorName, "The parameter command can not be null");
@@ -137,7 +150,11 @@ public class CommandQueueProcessor extends Thread {
             return commandExecutor;
         }
     }
-
+    /**
+     * Register a command in the command executor list
+     * @param commandName Name of the command
+     * @param commandExecutor Executor of the command
+     */
     public  void registerCommandExecutor(String commandName, ICommandExecutor commandExecutor){
 
         if(this.isInterrupted()){
@@ -155,6 +172,11 @@ public class CommandQueueProcessor extends Thread {
 
     }
 
+    /**
+     * Add a command to the queue
+     * @param command Command to be added
+     * @throws RuntimeException
+     */
     public void put(Command command) throws RuntimeException{
 
         if(this.isInterrupted()){
@@ -175,7 +197,9 @@ public class CommandQueueProcessor extends Thread {
         }
     }
 
-
+    /**
+     * Changes the power status to low power if no command is received in a period of time
+     */
     private class PeriodicCommandReceptionChecker extends TimerTask {
 
         @Override
