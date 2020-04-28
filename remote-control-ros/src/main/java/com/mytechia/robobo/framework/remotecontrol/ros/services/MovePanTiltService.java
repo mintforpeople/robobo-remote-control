@@ -23,7 +23,7 @@ import std_msgs.Int8;
  * It sends a MOVEPAN-BLOCKING and/or MOVETILT-BLOCKING commands to the robobo remote control module.
  *
  */
-public class MovePanTiltService {
+public class  MovePanTiltService {
 
     private CommandNode commandNode;
 
