@@ -8,7 +8,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 25
         versionCode 18
-        versionName "1.2.2"
+        versionName "1.2.3"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -28,14 +28,16 @@ version = VERSION_NAME
 group = GROUP
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+//    implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.4.0'
     testCompile 'junit:junit:4.12'
-    compile project(':remote-control')
-    implementation('org.ros.rosjava_core:rosjava:0.3.5') {
+//    api project(path:':remote-control', configuration:'archives')
+//    compile project(path:':remote-control')
+    implementation 'com.mytechia:robobo-remote-control:1.0.3' //This was the project, not the repo
+    implementation('org.ros.rosjava_core:rosjava:0.3.6') {
         exclude group: 'junit'
         exclude group: 'xml-apis'
         exclude group: 'com.google.code.findbugs'
@@ -50,12 +52,15 @@ dependencies {
         exclude group: 'xml-apis'
         exclude group: 'com.google.code.findbugs'
     }
-    implementation('org.ros.rosjava_messages:geometry_msgs:1.12.6') {
+    implementation('org.ros.rosjava_messages:geometry_msgs:1.12.7') {
         exclude group: 'junit'
         exclude group: 'xml-apis'
         exclude group: 'com.google.code.findbugs'
     }
-    implementation files('libs/robobo_msgs-1.2.0.jar')
+    implementation files('libs/robobo_msgs-1.2.1.jar')
+    implementation files('libs/aruco_msgs-0.2.3.jar')
+    implementation files('libs/opencv_apps-2.0.1.jar')
+    implementation files('libs/vision_msgs-0.0.1.jar')
 }
 
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

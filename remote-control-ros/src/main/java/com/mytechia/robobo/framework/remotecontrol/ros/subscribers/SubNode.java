@@ -9,24 +9,33 @@ import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
 
 public class SubNode extends AbstractNodeMain {
-    private static final String NAME_NODE_ROB_SUBSCRIBER ="robobo_subscriber";
+    private static final String NAME_NODE_ROB_SUBSCRIBER = "robobo_subscriber";
 
     private IRemoteControlModule remoteControlModule;
-    private String roboboName ="";
+    private String roboboName = "";
     private boolean started = false;
 
     private ConnectedNode connectedNode;
     private ModuleControlSub moduleControlSub;
+    private MovePanTiltSub movePanTiltSub;
+    private MoveWheelsSub moveWheelsSub;
+    private PlaySoundSub playSoundSub;
+    private ResetWheelsSub resetWheelsSub;
+    private SetCameraSub setCameraSub;
+    private SetEmotionSub setEmotionSub;
+    private SetFrequiencySub setFrequiencySub;
+    private SetLedSub setLedSub;
+    private TalkSub talkSub;
 
     public SubNode(IRemoteControlModule remoteControlModule, String roboboName) throws InternalErrorException {
 
-        if(remoteControlModule==null){
+        if (remoteControlModule == null) {
             throw new InternalErrorException("The parameter remoteControlModule is required");
         }
 
-        this.remoteControlModule= remoteControlModule;
+        this.remoteControlModule = remoteControlModule;
 
-        if(roboboName !=null){
+        if (roboboName != null) {
             this.roboboName = roboboName;
         }
 
@@ -55,6 +64,25 @@ public class SubNode extends AbstractNodeMain {
 
         this.moduleControlSub = new ModuleControlSub(this);
         this.moduleControlSub.start();
+
+        this.movePanTiltSub = new MovePanTiltSub(this);
+        this.movePanTiltSub.start();
+        this.moveWheelsSub = new MoveWheelsSub(this);
+        this.moveWheelsSub.start();
+        this.playSoundSub = new PlaySoundSub(this);
+        this.playSoundSub.start();
+        this.resetWheelsSub = new ResetWheelsSub(this);
+        this.resetWheelsSub.start();
+        this.setCameraSub = new SetCameraSub(this);
+        this.setCameraSub.start();
+        this.setEmotionSub = new SetEmotionSub(this);
+        this.setEmotionSub.start();
+        this.setFrequiencySub = new SetFrequiencySub(this);
+        this.setFrequiencySub.start();
+        this.setLedSub = new SetLedSub(this);
+        this.setLedSub.start();
+        this.talkSub = new TalkSub(this);
+        this.talkSub.start();
 
         this.started = true;
     }

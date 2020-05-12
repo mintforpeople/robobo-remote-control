@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import robobo_msgs.ModuleControl;
+import robobo_msgs.ModuleControlCommand;
 
 class ModuleControlSub {
     private static final String NODE_NAME = "module_control";
@@ -37,12 +37,10 @@ class ModuleControlSub {
     public void start() {
 
         String roboboName = this.subNode.getRoboboName();
-        Subscriber<ModuleControl> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), ModuleControl._TYPE);
-        subscriber.addMessageListener(new MessageListener<ModuleControl>() {
+        Subscriber<ModuleControlCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), ModuleControlCommand._TYPE);
+        subscriber.addMessageListener(new MessageListener<ModuleControlCommand>() {
             @Override
-            public void onNewMessage(ModuleControl msg) {
-//                ModuleControl msg = (ModuleControl) o;
-
+            public void onNewMessage(ModuleControlCommand msg) {
                 if (MODULES.contains(msg.getModuleName())) {
                     int id = 0;
                     HashMap<String, String> params = new HashMap<>();

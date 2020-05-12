@@ -19,7 +19,7 @@ import robobo_msgs.QrCode;
  */
 public class QrCodeStatusTopic extends AStatusTopic {
 
-    private static final String TOPIC = "qrcode";
+    private static final String TOPIC = "qr/status";
     public static final String STATUS = "QRCODE";
 
 

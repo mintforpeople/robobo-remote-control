@@ -91,9 +91,10 @@ public class StatusNode extends AbstractNodeMain {
     private LaneProStatusTopic laneProStatusTopic;
     private QrCodeStatusTopic qrCodeStatusTopic;
     private LineStatusTopic lineStatusTopic;
+    private QrCodeLostTopic qrCodeLostTopic;
+    private QrCodeAppearTopic qrCodeAppearTopic;
 
     private boolean started = false;
-
 
 
     public StatusNode(String roboboName){
@@ -187,6 +188,12 @@ public class StatusNode extends AbstractNodeMain {
         this.qrCodeStatusTopic=new QrCodeStatusTopic(this);
         qrCodeStatusTopic.start();
 
+        this.qrCodeAppearTopic=new QrCodeAppearTopic(this);
+        qrCodeAppearTopic.start();
+
+        this.qrCodeLostTopic=new QrCodeLostTopic(this);
+        qrCodeLostTopic.start();
+
         this.lineStatusTopic=new LineStatusTopic(this);
         lineStatusTopic.start();
 
@@ -278,6 +285,13 @@ public class StatusNode extends AbstractNodeMain {
                     this.qrCodeStatusTopic.publishStatus(status);
                     break;
 
+                case QrCodeAppearTopic.STATUS:
+                    this.qrCodeAppearTopic.publishStatus(status);
+                    break;
+
+                case QrCodeLostTopic.STATUS:
+                    this.qrCodeLostTopic.publishStatus(status);
+                    break;
 
                 case LineStatusTopic.STATUS:
                     this.lineStatusTopic.publishStatus(status);
