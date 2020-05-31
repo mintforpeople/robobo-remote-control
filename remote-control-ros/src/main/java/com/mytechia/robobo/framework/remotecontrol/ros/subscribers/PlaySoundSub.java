@@ -20,7 +20,7 @@ class PlaySoundSub {
     public void start() {
 
         String roboboName = this.subNode.getRoboboName();
-        Subscriber<PlaySoundCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), PlaySoundCommand._TYPE);
+        Subscriber<PlaySoundCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeAction(roboboName, NODE_NAME), PlaySoundCommand._TYPE);
         subscriber.addMessageListener(new MessageListener<PlaySoundCommand>() {
             @Override
             public void onNewMessage(PlaySoundCommand request) {

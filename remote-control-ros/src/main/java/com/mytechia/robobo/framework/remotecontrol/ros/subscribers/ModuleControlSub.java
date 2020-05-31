@@ -37,7 +37,7 @@ class ModuleControlSub {
     public void start() {
 
         String roboboName = this.subNode.getRoboboName();
-        Subscriber<ModuleControlCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), ModuleControlCommand._TYPE);
+        Subscriber<ModuleControlCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeAction(roboboName, NODE_NAME), ModuleControlCommand._TYPE);
         subscriber.addMessageListener(new MessageListener<ModuleControlCommand>() {
             @Override
             public void onNewMessage(ModuleControlCommand msg) {

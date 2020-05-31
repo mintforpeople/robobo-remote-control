@@ -22,7 +22,7 @@ class MoveWheelsSub {
     public void start() {
 
         String roboboName = this.subNode.getRoboboName();
-        Subscriber<MoveWheelsCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), MoveWheelsCommand._TYPE);
+        Subscriber<MoveWheelsCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeAction(roboboName, NODE_NAME), MoveWheelsCommand._TYPE);
         subscriber.addMessageListener(new MessageListener<MoveWheelsCommand>() {
             @Override
             public void onNewMessage(MoveWheelsCommand request) {

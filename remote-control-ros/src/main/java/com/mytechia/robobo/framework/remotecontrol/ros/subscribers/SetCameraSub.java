@@ -20,7 +20,7 @@ class SetCameraSub {
     public void start() {
 
         String roboboName = this.subNode.getRoboboName();
-        Subscriber<SetCameraCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), SetCameraCommand._TYPE);
+        Subscriber<SetCameraCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeAction(roboboName, NODE_NAME), SetCameraCommand._TYPE);
         subscriber.addMessageListener(new MessageListener<SetCameraCommand>() {
             @Override
             public void onNewMessage(SetCameraCommand request) {

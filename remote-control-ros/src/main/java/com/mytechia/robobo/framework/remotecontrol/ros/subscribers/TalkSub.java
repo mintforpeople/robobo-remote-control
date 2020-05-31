@@ -20,7 +20,7 @@ class TalkSub {
     public void start() {
 
         String roboboName = this.subNode.getRoboboName();
-        Subscriber<TalkCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), TalkCommand._TYPE);
+        Subscriber<TalkCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeAction(roboboName, NODE_NAME), TalkCommand._TYPE);
         subscriber.addMessageListener(new MessageListener<TalkCommand>() {
             @Override
             public void onNewMessage(TalkCommand request) {

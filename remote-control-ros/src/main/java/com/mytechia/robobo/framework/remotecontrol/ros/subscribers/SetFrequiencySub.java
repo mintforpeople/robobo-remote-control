@@ -20,7 +20,7 @@ class SetFrequiencySub {
     public void start() {
 
         String roboboName = this.subNode.getRoboboName();
-        Subscriber<SetSensorFrequencyCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), SetSensorFrequencyCommand._TYPE);
+        Subscriber<SetSensorFrequencyCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeAction(roboboName, NODE_NAME), SetSensorFrequencyCommand._TYPE);
         subscriber.addMessageListener(new MessageListener<SetSensorFrequencyCommand>() {
             @Override
             public void onNewMessage(SetSensorFrequencyCommand request) {

@@ -22,7 +22,7 @@ class MovePanTiltSub {
     public void start() {
 
         String roboboName = this.subNode.getRoboboName();
-        Subscriber<MovePanTiltCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), MovePanTiltCommand._TYPE);
+        Subscriber<MovePanTiltCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeAction(roboboName, NODE_NAME), MovePanTiltCommand._TYPE);
         subscriber.addMessageListener(new MessageListener<MovePanTiltCommand>() {
             @Override
             public void onNewMessage(MovePanTiltCommand request) {

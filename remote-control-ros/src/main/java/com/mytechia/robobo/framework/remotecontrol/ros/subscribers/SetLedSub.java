@@ -20,7 +20,7 @@ class SetLedSub {
     public void start() {
 
         String roboboName = this.subNode.getRoboboName();
-        Subscriber<SetLedCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), SetLedCommand._TYPE);
+        Subscriber<SetLedCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeAction(roboboName, NODE_NAME), SetLedCommand._TYPE);
         subscriber.addMessageListener(new MessageListener<SetLedCommand>() {
             @Override
             public void onNewMessage(SetLedCommand request) {

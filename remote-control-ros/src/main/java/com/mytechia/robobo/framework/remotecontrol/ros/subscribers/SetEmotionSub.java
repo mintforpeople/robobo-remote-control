@@ -20,7 +20,7 @@ class SetEmotionSub {
     public void start() {
 
         String roboboName = this.subNode.getRoboboName();
-        Subscriber<SetEmotionCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeName(roboboName, NODE_NAME), SetEmotionCommand._TYPE);
+        Subscriber<SetEmotionCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(NodeNameUtility.createNodeAction(roboboName, NODE_NAME), SetEmotionCommand._TYPE);
         subscriber.addMessageListener(new MessageListener<SetEmotionCommand>() {
             @Override
             public void onNewMessage(SetEmotionCommand request) {

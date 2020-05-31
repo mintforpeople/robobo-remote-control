@@ -22,7 +22,7 @@ class ResetWheelsSub {
 
         String roboboName = this.subNode.getRoboboName();
         Subscriber<ResetWheelsCommand> subscriber = this.subNode.getConnectedNode().newSubscriber(
-                NodeNameUtility.createNodeName(roboboName, NODE_NAME),
+                NodeNameUtility.createNodeAction(roboboName, NODE_NAME),
                 ResetWheelsCommand._TYPE
         );
         subscriber.addMessageListener(new MessageListener<ResetWheelsCommand>() {
