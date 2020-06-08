@@ -23,7 +23,7 @@ public class SubNode extends AbstractNodeMain {
     private ResetWheelsSub resetWheelsSub;
     private SetCameraSub setCameraSub;
     private SetEmotionSub setEmotionSub;
-    private SetFrequiencySub setFrequiencySub;
+    private SetFrequencySub setFrequencySub;
     private SetLedSub setLedSub;
     private TalkSub talkSub;
 
@@ -77,8 +77,8 @@ public class SubNode extends AbstractNodeMain {
         this.setCameraSub.start();
         this.setEmotionSub = new SetEmotionSub(this);
         this.setEmotionSub.start();
-        this.setFrequiencySub = new SetFrequiencySub(this);
-        this.setFrequiencySub.start();
+        this.setFrequencySub = new SetFrequencySub(this);
+        this.setFrequencySub.start();
         this.setLedSub = new SetLedSub(this);
         this.setLedSub.start();
         this.talkSub = new TalkSub(this);

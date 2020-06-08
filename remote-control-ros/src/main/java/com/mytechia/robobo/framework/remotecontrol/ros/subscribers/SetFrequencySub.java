@@ -9,11 +9,11 @@ import java.util.HashMap;
 
 import robobo_msgs.SetSensorFrequencyCommand;
 
-class SetFrequiencySub {
+class SetFrequencySub {
     private static final String NODE_NAME = "set_frequency";
     private SubNode subNode;
 
-    public SetFrequiencySub(SubNode subNode) {
+    public SetFrequencySub(SubNode subNode) {
         this.subNode = subNode;
     }
 
