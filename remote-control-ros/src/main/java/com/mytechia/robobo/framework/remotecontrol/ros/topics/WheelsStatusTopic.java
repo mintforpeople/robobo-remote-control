@@ -42,7 +42,7 @@ public class WheelsStatusTopic extends AStatusTopic {
             Wheels msg = this.topic.newMessage();
 
             String wheelPosR = status.getValue().get("wheelPosR");
-            String wheelPosL = status.getValue().get("wheelPosR");
+            String wheelPosL = status.getValue().get("wheelPosL");
             String wheelSpeedR = status.getValue().get("wheelSpeedR");
             String wheelSpeedL = status.getValue().get("wheelSpeedL");
 
