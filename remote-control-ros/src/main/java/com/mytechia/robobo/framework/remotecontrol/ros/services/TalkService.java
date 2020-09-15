@@ -18,9 +18,8 @@ import std_msgs.Int8;
 
 /**
  * ROS service for the Talk commands.
- *
+ * <p>
  * It sends a TALK command to the robobo remote control module.
- *
  */
 public class TalkService {
 
@@ -40,18 +39,16 @@ public class TalkService {
 
             @Override
             public void build(TalkRequest request, TalkResponse response) throws ServiceException {
-
-
                 HashMap<String, String> parameters = new HashMap<>();
                 parameters.put("text", request.getText().getData());
 
-                com.mytechia.robobo.framework.remote_control.remotemodule.Command command=
+                com.mytechia.robobo.framework.remote_control.remotemodule.Command command =
                         new com.mytechia.robobo.framework.remote_control.remotemodule.Command("TALK", 0, parameters);
 
                 commandNode.getRemoteControlModule().queueCommand(command);
 
                 Int8 r = response.getError();
-                r.setData((byte)0);
+                r.setData((byte) 0);
                 response.setError(r);
 
             }

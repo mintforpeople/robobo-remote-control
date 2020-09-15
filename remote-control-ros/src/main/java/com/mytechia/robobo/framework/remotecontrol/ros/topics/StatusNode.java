@@ -30,6 +30,9 @@ import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
 
+import opencv_apps.Line;
+import robobo_msgs.QrCode;
+
 
 /**
  * Created by julio on 12/07/17.
@@ -82,10 +85,16 @@ public class StatusNode extends AbstractNodeMain {
     private TapStatusTopic tapStatusTopic;
     private FlingStatusTopic flingStatusTopic;
     private IRsStatusTopic irsStatusTopic;
-
+    private DetectedObjectStatusTopic detectedObjectStatusTopic;
+    private TagStatusTopic tagStatusTopic;
+    private LaneBasicStatusTopic laneBasicStatusTopic;
+    private LaneProStatusTopic laneProStatusTopic;
+    private QrCodeStatusTopic qrCodeStatusTopic;
+    private LineStatusTopic lineStatusTopic;
+    private QrCodeLostTopic qrCodeLostTopic;
+    private QrCodeAppearTopic qrCodeAppearTopic;
 
     private boolean started = false;
-
 
 
     public StatusNode(String roboboName){
@@ -164,6 +173,30 @@ public class StatusNode extends AbstractNodeMain {
         this.irsStatusTopic = new IRsStatusTopic(this);
         this.irsStatusTopic.start();
 
+        this.detectedObjectStatusTopic = new DetectedObjectStatusTopic(this);
+        this.detectedObjectStatusTopic.start();
+
+        this.tagStatusTopic = new TagStatusTopic(this);
+        this.tagStatusTopic.start();
+
+        this.laneBasicStatusTopic=new LaneBasicStatusTopic(this);
+        laneBasicStatusTopic.start();
+
+        this.laneProStatusTopic=new LaneProStatusTopic(this);
+        laneProStatusTopic.start();
+
+        this.qrCodeStatusTopic=new QrCodeStatusTopic(this);
+        qrCodeStatusTopic.start();
+
+        this.qrCodeAppearTopic=new QrCodeAppearTopic(this);
+        qrCodeAppearTopic.start();
+
+        this.qrCodeLostTopic=new QrCodeLostTopic(this);
+        qrCodeLostTopic.start();
+
+        this.lineStatusTopic=new LineStatusTopic(this);
+        lineStatusTopic.start();
+
         this.started = true;
 
     }
@@ -230,6 +263,38 @@ public class StatusNode extends AbstractNodeMain {
 
                 case IRsStatusTopic.STATUS:
                     this.irsStatusTopic.publishStatus(status);
+                    break;
+
+                case DetectedObjectStatusTopic.STATUS:
+                    this.detectedObjectStatusTopic.publishStatus(status);
+                    break;
+
+                case TagStatusTopic.STATUS:
+                    this.tagStatusTopic.publishStatus(status);
+                    break;
+
+                case LaneBasicStatusTopic.STATUS:
+                    this.laneBasicStatusTopic.publishStatus(status);
+                    break;
+
+                case LaneProStatusTopic.STATUS:
+                    this.laneProStatusTopic.publishStatus(status);
+                    break;
+
+                case QrCodeStatusTopic.STATUS:
+                    this.qrCodeStatusTopic.publishStatus(status);
+                    break;
+
+                case QrCodeAppearTopic.STATUS:
+                    this.qrCodeAppearTopic.publishStatus(status);
+                    break;
+
+                case QrCodeLostTopic.STATUS:
+                    this.qrCodeLostTopic.publishStatus(status);
+                    break;
+
+                case LineStatusTopic.STATUS:
+                    this.lineStatusTopic.publishStatus(status);
                     break;
 
                 default:

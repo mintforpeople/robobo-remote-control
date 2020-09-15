@@ -34,6 +34,7 @@ import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlP
 import com.mytechia.robobo.framework.remote_control.remotemodule.Response;
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 import com.mytechia.robobo.framework.remotecontrol.ros.services.CommandNode;
+import com.mytechia.robobo.framework.remotecontrol.ros.subscribers.SubNode;
 import com.mytechia.robobo.framework.remotecontrol.ros.topics.StatusNode;
 
 import org.ros.address.InetAddressFactory;
@@ -80,6 +81,7 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
     private NodeConfiguration nodeConfiguration;
 
     private AndroidNodeMainExecutor nodeMainExecutor;
+    private SubNode subNode;
 
 
     @Override
@@ -165,6 +167,10 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
         this.commandNode = new CommandNode(remoteControlModule, roboboName);
 
         this.startRoboboRosNode(this.commandNode);
+
+        this.subNode = new SubNode(remoteControlModule, roboboName);
+
+        this.startRoboboRosNode(this.subNode);
 
     }
 
