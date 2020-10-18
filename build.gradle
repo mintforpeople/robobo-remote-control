@@ -7,12 +7,13 @@ buildscript {
         mavenCentral()
         jcenter()
         maven {
-            url "http://192.168.0.5:7080/nexus/content/repositories/snapshots/"
+            url "http://bizancio:7080/nexus/content/repositories/snapshots/"
         }
 
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.8.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -28,7 +29,7 @@ allprojects {
         google()
         jcenter()
         maven {
-            url "http://192.168.0.5:7080/nexus/content/repositories/snapshots/"
+            url "http://bizancio:7080/nexus/content/repositories/snapshots/"
         }
         maven {
             url 'https://github.com/rosjava/rosjava_mvn_repo/raw/master/'
