@@ -20,6 +20,8 @@
 
 package com.mytechia.robobo.framework.remote_control.remotemodule;
 
+import java.util.Date;
+
 /**
  * Class representing a Status
  */
@@ -32,6 +34,12 @@ public class Status extends Value {
      */
     public Status(String name){
         this.name = name;
+        //Getting the current date
+        Date date = new Date();
+        //This method returns the time in millis
+        long timeMilli = date.getTime();
+
+        this.putContents("timestamp",timeMilli +"");
     }
 
     /**
