@@ -78,6 +78,7 @@ public class StatusNode extends AbstractNodeMain {
     private StringStatusTopic emotionStatusTopic;
     private AccelerationStatusTopic accelStatusTopic;
     private OrientationStatusTopic orientationStatusTopic;
+    private OrientationEulerStatusTopic orientationEulerStatusTopic;
     private UnlockMoveStatusTopic unlockMoveStatusTopic;
     private UnlockTalkStatusTopic unlockTalkStatusTopic;
     private WheelsStatusTopic wheelsStatusTopic;
@@ -151,6 +152,9 @@ public class StatusNode extends AbstractNodeMain {
 
         this.orientationStatusTopic = new OrientationStatusTopic(this);
         this.orientationStatusTopic.start();
+
+        this.orientationEulerStatusTopic = new OrientationEulerStatusTopic(this);
+        this.orientationEulerStatusTopic.start();
 
         this.unlockMoveStatusTopic = new UnlockMoveStatusTopic(this);
         this.unlockMoveStatusTopic.start();
@@ -239,6 +243,7 @@ public class StatusNode extends AbstractNodeMain {
 
                 case OrientationStatusTopic.STATUS:
                     this.orientationStatusTopic.publishStatus(status);
+                    this.orientationEulerStatusTopic.publishStatus(status);
                     break;
 
                 case UnlockTalkStatusTopic.STATUS_UNLOCK_TALK:
