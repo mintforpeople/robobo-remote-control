@@ -58,9 +58,9 @@ public class OrientationEulerStatusTopic extends AStatusTopic {
                 msg.getPitch().setData(pitch);
                 msg.getRoll().setData(roll);
 
-                msg.getVector().setX(yaw);
+                msg.getVector().setX(roll);
                 msg.getVector().setY(pitch);
-                msg.getVector().setZ(roll);
+                msg.getVector().setZ(yaw);
 
 
                 this.topic.publish(msg);
