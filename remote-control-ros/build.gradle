@@ -60,7 +60,7 @@ dependencies {
         exclude group: 'xml-apis'
         exclude group: 'com.google.code.findbugs'
     }
-    implementation files('libs/robobo_msgs-1.2.1.jar')
+    implementation files('libs/robobo_msgs-1.2.2.jar')
     implementation files('libs/aruco_msgs-0.2.3.jar')
     implementation files('libs/opencv_apps-2.0.1.jar')
     implementation files('libs/vision_msgs-0.0.1.jar')
