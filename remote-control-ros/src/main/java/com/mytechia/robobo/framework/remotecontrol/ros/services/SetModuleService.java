@@ -40,18 +40,30 @@ public class SetModuleService {
 
             @Override
             public void build(SetModuleRequest request, SetModuleResponse response) throws ServiceException {
-                //HashMap<String, String> parameters = new HashMap<>();
-                //parameters.put("module_name", request.getModuleName().getData());
-                //parameters.put("module_state", request.getModuleState().getData());
-//
-                //com.mytechia.robobo.framework.remote_control.remotemodule.Command command=
-                //        new com.mytechia.robobo.framework.remote_control.remotemodule.Command("SET-LEDCOLOR", 0, parameters);
-//
-                //commandNode.getRemoteControlModule().queueCommand(command);
-//
-                //Int8 r = response.getError();
-                //r.setData((byte)0);
-                //response.setError(r);
+            HashMap<String, String> parameters = new HashMap<>();
+            String moduleName = request.getModuleName().getData();
+            Boolean moduleState = request.getModuleState().getData();
+
+            //parameters.put("module_name", request.getModuleName().getData());
+            //parameters.put("module_state", request.getModuleState().getData()z
+            String lastPart = moduleName.toUpperCase();
+            String firstPart = "";
+            if (moduleState){
+                firstPart = "START-";
+            }
+            else {
+                firstPart = "STOP-";
+            }
+
+
+            com.mytechia.robobo.framework.remote_control.remotemodule.Command command=
+                    new com.mytechia.robobo.framework.remote_control.remotemodule.Command(firstPart+lastPart, 0, parameters);
+
+            commandNode.getRemoteControlModule().queueCommand(command);
+
+            Int8 r = response.getError();
+            r.setData((byte)0);
+            response.setError(r);
             }
 
 

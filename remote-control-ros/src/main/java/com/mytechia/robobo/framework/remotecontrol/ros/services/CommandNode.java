@@ -59,6 +59,7 @@ public class CommandNode extends AbstractNodeMain {
     private SetEmotionService setEmotionService;
     private SetFrequencyService setFrequencyService;
     private SetLedService setLedService;
+    private SetModuleService setModuleService;
     private TalkService talkService;
 
 
@@ -120,6 +121,9 @@ public class CommandNode extends AbstractNodeMain {
 
         this.setLedService = new SetLedService(this);
         this.setLedService.start();
+
+        this.setModuleService = new SetModuleService(this);
+        this.setModuleService.start();
 
         this.talkService = new TalkService(this);
         this.talkService.start();
