@@ -25,6 +25,8 @@ package com.mytechia.robobo.framework.remotecontrol.ros.services;
 
 
 
+import android.util.Log;
+
 import com.mytechia.commons.framework.exception.InternalErrorException;
 
 

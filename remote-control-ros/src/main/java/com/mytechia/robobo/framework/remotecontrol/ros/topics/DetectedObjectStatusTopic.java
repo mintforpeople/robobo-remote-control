@@ -1,5 +1,7 @@
 package com.mytechia.robobo.framework.remotecontrol.ros.topics;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -24,6 +26,7 @@ public class DetectedObjectStatusTopic extends AStatusTopic {
 
     private static final String TOPIC = "detected_object";
     public static final String STATUS = "DETECTED_OBJECT";
+    public static final String TAG = "DETECTED_OBJECT_TOPIC";
 
 
     private Publisher<Detection2DArray> topic;
@@ -48,6 +51,8 @@ public class DetectedObjectStatusTopic extends AStatusTopic {
             String frame_id = status.getValue().get("frame_id"),
                     count = status.getValue().get("count"),
                     detections = status.getValue().get("detections");
+            //Log.d(TAG,"Detected "+detections);
+
 
 
             if (frame_id != null &&
@@ -74,6 +79,8 @@ public class DetectedObjectStatusTopic extends AStatusTopic {
                     msg.getDetections().get(i).getResults().add(node.getConnectedNode().getTopicMessageFactory().<ObjectHypothesisWithPose>newFromType(ObjectHypothesisWithPose._TYPE));
                     msg.getDetections().get(i).getResults().get(0).setScore(jobj.get("confidence").getAsDouble());
                     msg.getDetections().get(i).getResults().get(0).setId(jobj.get("id").getAsInt());
+                    Log.d("OBJECTTOPIC", String.valueOf(msg.getDetections().get(i).getResults().get(0).getId()));
+
                 }
 
                 this.topic.publish(msg);

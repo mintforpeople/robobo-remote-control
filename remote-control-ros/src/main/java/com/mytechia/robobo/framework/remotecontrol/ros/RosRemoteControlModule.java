@@ -64,7 +64,7 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
 
     public final static String DEFAULT_MASTER_URI = "http://localhost:11311/";
 
-    public static final String MASTER_URI = "com.mytehia.ros.master.uri";
+    public static final String MASTER_URI = "com.mytechia.ros.master.uri";
 
     public static final String ROBOBO_NAME="robobo.name";
 
@@ -108,7 +108,7 @@ public class RosRemoteControlModule implements IRemoteControlProxy, IRosRemoteCo
         try {
             this.nodeMainExecutor = new AndroidNodeMainExecutor(context, masterUri, rosHostName);
         } catch (URISyntaxException ex) {
-            throw new InternalErrorException(ex, "Error strating up ROS Remote Control Module");
+            throw new InternalErrorException(ex, "Error starting up ROS Remote Control Module");
         }
 
         this.nodeConfiguration = NodeConfiguration.newPublic(rosHostName);

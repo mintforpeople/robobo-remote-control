@@ -1,5 +1,7 @@
 package com.mytechia.robobo.framework.remotecontrol.ros.subscribers;
 
+import android.util.Log;
+
 import com.mytechia.robobo.framework.remotecontrol.ros.util.NodeNameUtility;
 
 import org.ros.message.MessageListener;
@@ -24,6 +26,7 @@ class TalkSub {
         subscriber.addMessageListener(new MessageListener<TalkCommand>() {
             @Override
             public void onNewMessage(TalkCommand request) {
+                Log.d("TALKSUB", request.toString());
                 HashMap<String, String> parameters = new HashMap<>();
                 parameters.put("text", request.getText().getData());
 

@@ -1,5 +1,7 @@
 package com.mytechia.robobo.framework.remotecontrol.ros.subscribers;
 
+import android.util.Log;
+
 import com.mytechia.commons.framework.exception.InternalErrorException;
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
 import com.mytechia.robobo.framework.remotecontrol.ros.util.NodeNameUtility;

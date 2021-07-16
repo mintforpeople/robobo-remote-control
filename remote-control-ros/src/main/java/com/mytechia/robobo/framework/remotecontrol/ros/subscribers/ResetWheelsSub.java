@@ -25,6 +25,7 @@ class ResetWheelsSub {
                 NodeNameUtility.createNodeAction(roboboName, NODE_NAME),
                 ResetWheelsCommand._TYPE
         );
+
         subscriber.addMessageListener(new MessageListener<ResetWheelsCommand>() {
             @Override
             public void onNewMessage(ResetWheelsCommand request) {
@@ -34,5 +35,7 @@ class ResetWheelsSub {
                 subNode.getRemoteControlModule().queueCommand(command);
             }
         },3);
+
+
     }
 }
