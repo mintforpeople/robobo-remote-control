@@ -1,5 +1,7 @@
 package com.mytechia.robobo.framework.remotecontrol.ros.topics;
 
+import android.util.Log;
+
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 import com.mytechia.robobo.framework.remotecontrol.ros.util.NodeNameUtility;
 
@@ -43,6 +45,8 @@ public class FlingStatusTopic extends AStatusTopic {
             String angle = status.getValue().get("angle");
             String time = status.getValue().get("time");
             String distance = status.getValue().get("distance");
+
+            Log.d("FLINGSTATUS", angle+" "+time+" "+distance);
 
             if (angle!=null && time!=null && distance!= null) {
 

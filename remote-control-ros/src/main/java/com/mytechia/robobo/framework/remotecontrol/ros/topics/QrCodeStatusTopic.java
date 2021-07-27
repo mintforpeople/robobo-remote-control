@@ -1,5 +1,7 @@
 package com.mytechia.robobo.framework.remotecontrol.ros.topics;
 
+import android.util.Log;
+
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 import com.mytechia.robobo.framework.remotecontrol.ros.util.NodeNameUtility;
 
@@ -41,7 +43,7 @@ public class QrCodeStatusTopic extends AStatusTopic {
 
         if (status.getName().equals(this.getSupportedStatus())) {
             QrCode msg = this.topic.newMessage();
-
+            Log.d("ROS","Publish qr status");
             String id = status.getValue().get("id"),
                     coordx = status.getValue().get("coordx"),
                     coordy = status.getValue().get("coordy"),
@@ -53,6 +55,7 @@ public class QrCodeStatusTopic extends AStatusTopic {
                     p2y = status.getValue().get("p2y"),
                     p3x = status.getValue().get("p3x"),
                     p3y = status.getValue().get("p3y");
+            Log.d("QR",id +" "+ coordx+ " "+coordy+" "+ distance +" "+frame_id );
 
             if (id != null &&
                     coordx != null &&

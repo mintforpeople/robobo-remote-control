@@ -94,6 +94,7 @@ public class StatusNode extends AbstractNodeMain {
     private LineStatusTopic lineStatusTopic;
     private QrCodeLostTopic qrCodeLostTopic;
     private QrCodeAppearTopic qrCodeAppearTopic;
+    private BlobStatusTopic blobStatusTopic;
 
     private boolean started = false;
 
@@ -184,22 +185,25 @@ public class StatusNode extends AbstractNodeMain {
         this.tagStatusTopic.start();
 
         this.laneBasicStatusTopic=new LaneBasicStatusTopic(this);
-        laneBasicStatusTopic.start();
+        this.laneBasicStatusTopic.start();
 
         this.laneProStatusTopic=new LaneProStatusTopic(this);
-        laneProStatusTopic.start();
+        this.laneProStatusTopic.start();
 
         this.qrCodeStatusTopic=new QrCodeStatusTopic(this);
-        qrCodeStatusTopic.start();
+        this.qrCodeStatusTopic.start();
 
         this.qrCodeAppearTopic=new QrCodeAppearTopic(this);
-        qrCodeAppearTopic.start();
+        this.qrCodeAppearTopic.start();
 
         this.qrCodeLostTopic=new QrCodeLostTopic(this);
-        qrCodeLostTopic.start();
+        this.qrCodeLostTopic.start();
 
         this.lineStatusTopic=new LineStatusTopic(this);
-        lineStatusTopic.start();
+        this.lineStatusTopic.start();
+
+        this.blobStatusTopic=new BlobStatusTopic(this);
+        this.blobStatusTopic.start();
 
         this.started = true;
 
@@ -300,6 +304,10 @@ public class StatusNode extends AbstractNodeMain {
 
                 case LineStatusTopic.STATUS:
                     this.lineStatusTopic.publishStatus(status);
+                    break;
+
+                case BlobStatusTopic.STATUS:
+                    this.blobStatusTopic.publishStatus(status);
                     break;
 
                 default:

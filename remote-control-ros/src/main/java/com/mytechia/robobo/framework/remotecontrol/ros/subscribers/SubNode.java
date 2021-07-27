@@ -10,6 +10,8 @@ import org.ros.namespace.GraphName;
 import org.ros.node.AbstractNodeMain;
 import org.ros.node.ConnectedNode;
 
+import robobo_msgs.SetModule;
+
 public class SubNode extends AbstractNodeMain {
     private static final String NAME_NODE_ROB_SUBSCRIBER = "robobo_subscriber";
 
@@ -28,6 +30,7 @@ public class SubNode extends AbstractNodeMain {
     private SetFrequencySub setFrequencySub;
     private SetLedSub setLedSub;
     private TalkSub talkSub;
+    private SetBlobSub setBlobSub;
 
     public SubNode(IRemoteControlModule remoteControlModule, String roboboName) throws InternalErrorException {
 
@@ -85,6 +88,8 @@ public class SubNode extends AbstractNodeMain {
         this.setLedSub.start();
         this.talkSub = new TalkSub(this);
         this.talkSub.start();
+        this.setBlobSub = new SetBlobSub(this);
+        this.setBlobSub.start();
 
         this.started = true;
     }

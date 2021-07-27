@@ -1,5 +1,7 @@
 package com.mytechia.robobo.framework.remotecontrol.ros.topics;
 
+import android.util.Log;
+
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 import com.mytechia.robobo.framework.remotecontrol.ros.util.NodeNameUtility;
 
@@ -39,6 +41,7 @@ public class LineStatusTopic extends AStatusTopic {
 
         if (status.getName().equals(this.getSupportedStatus())) {
             String [] mat_items;
+            Log.d("ROS","Publish line status");
 
             LineArrayStamped msg = this.topic.newMessage();
 
