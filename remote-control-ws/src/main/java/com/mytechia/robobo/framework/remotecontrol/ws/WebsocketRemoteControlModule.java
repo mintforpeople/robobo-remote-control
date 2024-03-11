@@ -20,6 +20,7 @@
 
 package com.mytechia.robobo.framework.remotecontrol.ws;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
@@ -36,15 +37,26 @@ import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 import org.java_websocket.WebSocket;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 import static java.lang.String.format;
 
@@ -299,12 +311,47 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
         @Override
         public void onError(WebSocket conn, Exception ex) {
-            Log.e(TAG, format("Error WebSocket[local=%s, remote=%s]", conn.getLocalSocketAddress(), conn.getRemoteSocketAddress()), ex);
-            roboboManager.log(LogLvl.ERROR, TAG, format("Error WebSocket[local=%s, remote=%s]", conn.getLocalSocketAddress(), conn.getRemoteSocketAddress()));
+            ex.printStackTrace();
+            if (conn != null) {
+                Log.e(TAG, format("Error WebSocket[local=%s, remote=%s]", conn.getLocalSocketAddress(), conn.getRemoteSocketAddress()), ex);
+                roboboManager.log(LogLvl.ERROR, TAG, format("Error WebSocket[local=%s, remote=%s]", conn.getLocalSocketAddress(), conn.getRemoteSocketAddress()));
+
+            }else{
+                Log.e(TAG, "Error WebSocket, connection is null");
+                roboboManager.log(LogLvl.ERROR, TAG, "Error WebSocket, connection is null");
+            }
         }
 
     }
 
+    private SSLContext getSSLConextFromAndroidKeystore(Context c) {
+        // load up the key store
+        String storePassword = "robpass";
+        String keyPassword = "robpass";
+
+        KeyStore ks;
+        SSLContext sslContext;
+        try {
+            KeyStore keystore = KeyStore.getInstance("BKS");
+            InputStream in = c.getResources().openRawResource(R.raw.keystorerobbks);
+            try {
+                keystore.load(in, storePassword.toCharArray());
+            } finally {
+                in.close();
+            }
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
+            keyManagerFactory.init(keystore, keyPassword .toCharArray());
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+            tmf.init(keystore);
+
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(keyManagerFactory.getKeyManagers(), tmf.getTrustManagers(), null);
+        } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException();
+        }
+        return sslContext;
+    }
     @Override
     public void startup(RoboboManager manager) throws InternalErrorException {
 
@@ -327,9 +374,13 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
             e.printStackTrace();
         }
 
-        this.webSocketServer= new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wsport","40404")));
 
+
+
+        this.webSocketServer= new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wsport","40404")));
+        this.webSocketServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSLConextFromAndroidKeystore(this.roboboManager.getApplicationContext()) ));
         this.webSocketServer.start();
+
 
     }
 
