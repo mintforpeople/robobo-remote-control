@@ -5,15 +5,19 @@ buildscript {
         google()
         mavenLocal()
         mavenCentral()
-        jcenter()
         maven {
-            url "http://bizancio:7080/nexus/content/repositories/snapshots/"
+            url "http://10.113.36.13:8083/nexus/repository/snapshots/"
+            allowInsecureProtocol=true
+        }
+        maven {
+            url "http://10.113.36.13:8083/nexus/repository/releases/"
+            allowInsecureProtocol=true
         }
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.8.0'
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        // classpath 'com.vanniktech:gradle-maven-publish-plugin:0.12.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -27,12 +31,16 @@ allprojects {
         mavenLocal()
         mavenCentral()
         google()
-        jcenter()
         maven {
-            url "http://bizancio:7080/nexus/content/repositories/snapshots/"
+            url "http://10.113.36.13:8083/nexus/repository/snapshots/"
+            allowInsecureProtocol=true
         }
         maven {
-            url 'https://github.com/rosjava/rosjava_mvn_repo/raw/master/'
+            url "http://10.113.36.13:8083/nexus/repository/releases/"
+            allowInsecureProtocol=true
+        }
+        maven {
+            url "https://github.com/rosjava/rosjava_mvn_repo/raw/master"
         }
 
         flatDir {

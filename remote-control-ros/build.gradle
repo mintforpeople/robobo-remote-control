@@ -1,16 +1,15 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 22
-        targetSdkVersion 29
+        targetSdkVersion 33
         versionCode 22
         versionName "1.5.0-SNAPSHOT"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
     }
     buildTypes {
@@ -32,48 +31,24 @@ group = GROUP
 // https://github.com/rosjava/android_core/issues/300
 dependencies {
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'com.android.support:appcompat-v7:25.4.0'
-    testImplementation 'junit:junit:4.12'
+    implementation "com.google.guava:guava:23.0"
+    implementation 'commons-logging:commons-logging:1.2'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    testImplementation 'junit:junit:4.13.2'
 //    api project(path:':remote-control', configuration:'archives')
     //implementation project(path:':remote-control')
     implementation 'com.mytechia:robobo-remote-control:1.0.2' //This was the project, not the repo
-    implementation('org.ros.rosjava_core:rosjava:0.3.6') {
-        exclude group: 'junit'
-        exclude group: 'xml-apis'
-        exclude group: 'com.google.code.findbugs'
-    }
-    implementation('org.ros.android_core:android_10:0.3.3') {
-        exclude group: 'junit'
-        exclude group: 'xml-apis'
-        exclude group: 'com.google.code.findbugs'
-    }
-    implementation('org.ros.rosjava_messages:std_msgs:0.5.11') {
-        exclude group: 'junit'
-        exclude group: 'xml-apis'
-        exclude group: 'com.google.code.findbugs'
-    }
-    implementation('org.ros.rosjava_messages:geometry_msgs:1.12.7') {
-        exclude group: 'junit'
-        exclude group: 'xml-apis'
-        exclude group: 'com.google.code.findbugs'
-    }
-    implementation files('libs/robobo_msgs-1.2.3.jar')
+
+    implementation 'org.ros.rosjava_core:rosjava:0.3.6'
+    implementation 'org.ros.android_core:android_10:0.3.3'
+    implementation('org.ros.rosjava_messages:std_msgs:0.5.11')
+    implementation('org.ros.rosjava_messages:geometry_msgs:1.12.7')
+
+    implementation files('libs/robobo_msgs-1.2.2.jar')
     implementation files('libs/aruco_msgs-0.2.3.jar')
     implementation files('libs/opencv_apps-2.0.1.jar')
     implementation files('libs/vision_msgs-0.0.1.jar')
-}
-
-
-//apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
-apply plugin: "com.vanniktech.maven.publish"
-
-afterEvaluate { project ->
-    android.libraryVariants.all { variant ->
-        tasks.androidJavadocs.doFirst {
-            classpath += files(variant.javaCompile.classpath.files)
-        }
-    }
 }

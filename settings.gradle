@@ -1,1 +1,1 @@
-include ':remote-control', ':remote-control-ws', ':remote-control-ros'
+include ':remote-control', ':remote-control-ws'
