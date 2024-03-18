@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 33
     buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "com.mytechia.robobo.framework.remotecontrol"
         minSdkVersion 21
-        targetSdkVersion 24
+        targetSdkVersion 33
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -34,24 +34,24 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    testCompile 'junit:junit:4.12'
-    compile project(':remote-control')
-    compile 'com.mytechia:robobo-framework:1.0.0'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.mytechia:robobo-remote-control-module:0.3.1-SNAPSHOT'
-    compile 'com.mytechia:robobo-speech:0.3.1.2-SNAPSHOT'
-    compile 'com.mytechia:robobo-movement-module:0.3.2.4-SNAPSHOT'
-    compile ('com.mytechia:robobo-rob-module:0.3.1-SNAPSHOT')
-    compile 'com.mytechia:robobo-sensing:0.3.0'
-    compile 'com.mytechia:robobo-sound:0.3.1.6-SNAPSHOT'
-    compile 'com.mytechia:robobo-hri-touch-module:0.3.0'
-    compile 'com.mytechia:opencv:3.1.0-r2-my'
-    compile 'com.mytechia:robobo-vision:0.3.2.10-BQ-SNAPSHOT'
-    compile 'com.mytechia:robobo-hri-emotion-module:0.3.3.2-SNAPSHOT'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    testImplementation 'junit:junit:4.13.2'
+    implementation project(':remote-control')
+    implementation 'com.mytechia:robobo-framework:1.3.4'
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.mytechia:robobo-remote-control-module:0.3.1-SNAPSHOT'
+    implementation 'com.mytechia:robobo-speech:1.0.4-SNAPSHOT'
+    implementation 'com.mytechia:robobo-movement-module:0.3.2.4-SNAPSHOT'
+    implementation ('com.mytechia:robobo-rob-module:0.3.1-SNAPSHOT')
+    implementation 'com.mytechia:robobo-sensing:1.0.2'
+    implementation 'com.mytechia:robobo-sound:1.2.0'
+    implementation 'com.mytechia:robobo-hri-touch-module:0.3.0'
+    implementation 'com.mytechia:opencv:3.1.0-r2-my'
+    implementation 'com.mytechia:robobo-vision:1.2.3-SNAPSHOT'
+    implementation 'com.mytechia:robobo-hri-emotion-module:0.3.3.2-SNAPSHOT'
 
 }
