@@ -3,11 +3,10 @@ package com.mytechia.robobo.framework.remotecontrol;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.mytechia.robobo.framework.RoboboManager;
@@ -212,9 +211,9 @@ public class SampleActivity extends AppCompatActivity implements ITestListener  
             }
 
             @Override
-            public void onError(String errorMsg) {
+            public void onError(Throwable ex) {
 
-                final String error = errorMsg;
+                final String error = ex.getLocalizedMessage();
 
                 runOnUiThread(new Runnable() {
                     @Override
