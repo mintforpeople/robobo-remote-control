@@ -25,7 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 
-public class SampleActivity extends AppCompatActivity implements ITestListener  {
+public class                                                                                                                                                                                                                                                                                                                    SampleActivity extends AppCompatActivity implements ITestListener  {
     private static final String TAG="RemoteControlActivity";
 
     public SampleActivity() throws URISyntaxException {
@@ -40,7 +40,7 @@ public class SampleActivity extends AppCompatActivity implements ITestListener  
 
 
 
-        private IRemoteControlModule remoteModule;
+    private IRemoteControlModule remoteModule;
 
 
     private WebSocketClient ws ;
