@@ -47,20 +47,8 @@ import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
 import com.mytechia.robobo.rob.BluetoothRobInterfaceModule;
 import com.mytechia.robobo.rob.IRob;
-import com.mytechia.robobo.rob.IRobInterfaceModule;
-import com.mytechia.robobo.rob.MoveMTMode;
-import com.mytechia.robobo.rob.movement.DefaultRobMovementModule;
-import com.mytechia.robobo.rob.movement.IRobMovementModule;
 import com.mytechia.robobo.rob.util.RoboboDeviceSelectionDialog;
-import com.mytechia.robobo.util.Color;
 
-
-
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -228,9 +216,8 @@ public class DemoScratchActivity extends Activity implements IRemoteListener{
             }
 
             @Override
-            public void onError(String errorMsg) {
-
-                final String error = errorMsg;
+            public void onError(Throwable ex) {
+                final String error = ex.getLocalizedMessage();
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -244,9 +231,7 @@ public class DemoScratchActivity extends Activity implements IRemoteListener{
 
                     }
                 });
-
             }
-
         });
 
         //start & bind the Robobo service
