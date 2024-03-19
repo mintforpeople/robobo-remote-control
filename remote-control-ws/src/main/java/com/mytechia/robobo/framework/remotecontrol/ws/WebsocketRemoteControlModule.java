@@ -322,6 +322,11 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
             }
         }
 
+        @Override
+        public void onStart() {
+
+        }
+
     }
 
     private SSLContext getSSLConextFromAndroidKeystore(Context c) {

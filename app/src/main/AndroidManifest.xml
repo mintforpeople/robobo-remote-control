@@ -19,7 +19,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:replace="android:label, android:icon">
-            <activity android:name=".DemoScratchActivity"
+            <activity android:name=".ServerTestActivity"
                 android:exported="true">
                 <intent-filter>
                     <action android:name="android.intent.action.MAIN" />
