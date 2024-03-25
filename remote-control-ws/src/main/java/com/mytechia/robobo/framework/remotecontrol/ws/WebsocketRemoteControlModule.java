@@ -390,7 +390,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
     }
 
     @Override
-    public void shutdown() throws InternalErrorException {
+    public void shutdown() {
 
         setShuttingDown(true);
 
@@ -403,11 +403,9 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
             }
 
             webSocketServer.stop();
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Log.e(TAG, format("Error closing WebSocketServer", ex));
             roboboManager.log(LogLvl.ERROR, TAG, "Error closing WebSocketServer");
-        } catch (InterruptedException ex) {
-            roboboManager.log(LogLvl.ERROR, TAG, "Error closing WebSocketServer. InterruptedException.");
         }
     }
 
