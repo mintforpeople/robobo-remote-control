@@ -11,6 +11,12 @@ import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlM
 import com.mytechia.robobo.framework.remotecontrol.ws.WebsocketRemoteControlModule;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
 
+import org.java_websocket.WebSocket;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
+import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
+import org.java_websocket.server.WebSocketServer;
+
 public class ServerTestActivity extends AppCompatActivity {
     private static final String TAG="ServerTestActivity";
     private RoboboManager manager;
