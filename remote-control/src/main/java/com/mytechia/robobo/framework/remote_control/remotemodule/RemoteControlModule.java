@@ -170,6 +170,4 @@ public class RemoteControlModule implements IRemoteControlModule {
         return "0.3.1";
     }
 
-
-
 }
