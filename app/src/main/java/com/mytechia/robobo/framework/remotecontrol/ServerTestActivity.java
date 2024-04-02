@@ -79,15 +79,15 @@ public class ServerTestActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        WebSocketServerImpl wsServer = new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wsport","40404")));
-        wsServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSLConextFromAndroidKeystore(manager.getApplicationContext()) ));
+        WebSocketServerImpl wsServer = new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wssport","40404")));
+        wsServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSLContextFromAndroidKeystore(manager.getApplicationContext()) ));
         wsServer.start();
     }
 
-    private SSLContext getSSLConextFromAndroidKeystore(Context c) {
+    private SSLContext getSSLContextFromAndroidKeystore(Context c) {
         // load up the key store
-        String storePassword = "robpass";
-        String keyPassword = "robpass";
+        String storePassword = "robopass";
+        String keyPassword = "robopass";
 
         KeyStore ks;
         SSLContext sslContext;
@@ -100,7 +100,7 @@ public class ServerTestActivity extends AppCompatActivity {
                 in.close();
             }
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
-            keyManagerFactory.init(keystore, keyPassword .toCharArray());
+            keyManagerFactory.init(keystore, keyPassword.toCharArray());
             TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
             tmf.init(keystore);
 
