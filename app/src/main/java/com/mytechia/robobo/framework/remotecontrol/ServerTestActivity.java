@@ -41,7 +41,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 public class ServerTestActivity extends AppCompatActivity {
-    private static final String TAG="ServerTestActivity";
+    private static final String TAG="SERVER-WSS";
     private RoboboManager manager;
     IRemoteControlModule remoteModule;
     WebsocketRemoteControlModule wsRemoteProxy;
@@ -86,14 +86,14 @@ public class ServerTestActivity extends AppCompatActivity {
 
     private SSLContext getSSLContextFromAndroidKeystore(Context c) {
         // load up the key store
-        String storePassword = "robopass";
-        String keyPassword = "robopass";
+        String storePassword = "robobo-pass";
+        String keyPassword = "robobo-pass";
 
         KeyStore ks;
         SSLContext sslContext;
         try {
             KeyStore keystore = KeyStore.getInstance("BKS");
-            InputStream in = c.getResources().openRawResource(R.raw.keystore);
+            InputStream in = c.getResources().openRawResource(R.raw.robobokeystore);
             try {
                 keystore.load(in, storePassword.toCharArray());
             } finally {
@@ -122,12 +122,12 @@ public class ServerTestActivity extends AppCompatActivity {
 
         @Override
         public void onOpen(WebSocket conn, ClientHandshake handshake) {
-            manager.log(LogLvl.DEBUG, TAG, format("Open websocket connection %s", conn.getRemoteSocketAddress()));
+            Log.i(TAG, format("Open websocket connection %s", conn.getRemoteSocketAddress()));
         }
 
         @Override
         public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-            manager.log(LogLvl.DEBUG, TAG, format("Closed websocket connection"));
+            Log.i(TAG, format("Closed websocket connection"));
         }
 
         @Override
@@ -135,7 +135,7 @@ public class ServerTestActivity extends AppCompatActivity {
             if((message==null) || (message.length()==0)){
                 return;
             }
-            manager.log(LogLvl.TRACE, TAG, format("Received message:%s|%s| from %s", message, message.substring(10), webSocketConnection.getRemoteSocketAddress()));
+            Log.i(TAG, format("Received message:%s|%s| from %s", message, message.substring(10), webSocketConnection.getRemoteSocketAddress()));
         }
 
         @Override
@@ -143,11 +143,8 @@ public class ServerTestActivity extends AppCompatActivity {
             ex.printStackTrace();
             if (conn != null) {
                 Log.e(TAG, format("Error WebSocket[local=%s, remote=%s]", conn.getLocalSocketAddress(), conn.getRemoteSocketAddress()), ex);
-                manager.log(LogLvl.ERROR, TAG, format("Error WebSocket[local=%s, remote=%s]", conn.getLocalSocketAddress(), conn.getRemoteSocketAddress()));
-
             }else{
                 Log.e(TAG, "Error WebSocket, connection is null");
-                manager.log(LogLvl.ERROR, TAG, "Error WebSocket, connection is null");
             }
         }
     }
