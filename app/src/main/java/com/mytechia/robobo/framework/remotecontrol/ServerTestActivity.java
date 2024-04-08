@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -41,15 +42,20 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 public class ServerTestActivity extends AppCompatActivity {
-    private static final String TAG="SERVER-WSS";
+    private static final String TAG="ServerTestActivity";
     private RoboboManager manager;
     IRemoteControlModule remoteModule;
     WebsocketRemoteControlModule wsRemoteProxy;
+
+    private TextView textview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
+
+        textview = (TextView) findViewById(R.id.textView);
+
         RoboboServiceHelper serviceHelper = new RoboboServiceHelper(this, new RoboboServiceHelper.Listener() {
             @Override
             public void onRoboboManagerStarted(RoboboManager roboboManager) {
@@ -122,12 +128,12 @@ public class ServerTestActivity extends AppCompatActivity {
 
         @Override
         public void onOpen(WebSocket conn, ClientHandshake handshake) {
-            Log.i(TAG, format("Open websocket connection %s", conn.getRemoteSocketAddress()));
+            manager.log(LogLvl.DEBUG, TAG, format("Open websocket connection %s", conn.getRemoteSocketAddress()));
         }
 
         @Override
         public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-            Log.i(TAG, format("Closed websocket connection"));
+            manager.log(LogLvl.DEBUG, TAG, format("Closed websocket connection"));
         }
 
         @Override
@@ -135,7 +141,7 @@ public class ServerTestActivity extends AppCompatActivity {
             if((message==null) || (message.length()==0)){
                 return;
             }
-            Log.i(TAG, format("Received message:%s|%s| from %s", message, message.substring(10), webSocketConnection.getRemoteSocketAddress()));
+            manager.log(LogLvl.TRACE, TAG, format("Received message:%s|%s| from %s", message, message.substring(10), webSocketConnection.getRemoteSocketAddress()));
         }
 
         @Override
