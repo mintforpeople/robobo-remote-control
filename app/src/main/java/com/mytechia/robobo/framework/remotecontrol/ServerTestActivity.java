@@ -85,28 +85,55 @@ public class ServerTestActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        WebSocketServerImpl wsServer = new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wssport","40404")));
-        wsServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSLContextFromAndroidKeystore(manager.getApplicationContext()) ));
-        wsServer.start();
-    }
+        WebSocketServerImpl wsServer = new WebSocketServerImpl(8443);
 
+        // load up the key store
+        String STORETYPE = "BKS";
+        String STOREPASSWORD = "robobowss-pass";
+        String KEYPASSWORD = "robobowss-pass";
+        try{
+            KeyStore ks = KeyStore.getInstance(STORETYPE);
+            InputStream in = getApplicationContext().getResources().openRawResource(R.raw.keystorewss);
+            try {
+                ks.load(in, STOREPASSWORD.toCharArray());
+            } finally {
+                in.close();
+            }
+
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+            kmf.init(ks, KEYPASSWORD.toCharArray());
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+            tmf.init(ks);
+
+            SSLContext sslContext = null;
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+
+            wsServer.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+
+            wsServer.start();
+        } catch (Exception ex){
+            System.out.println(ex);
+        }
+    }
+    /*
     private SSLContext getSSLContextFromAndroidKeystore(Context c) {
         // load up the key store
-        String storePassword = "robobo-pass";
-        String keyPassword = "robobo-pass";
+        String storePassword = "robobowss-pass";
+        String keyPassword = "robobowss-pass";
 
         KeyStore ks;
         SSLContext sslContext;
         try {
             KeyStore keystore = KeyStore.getInstance("BKS");
-            InputStream in = c.getResources().openRawResource(R.raw.robobokeystore);
+            InputStream in = c.getResources().openRawResource(R.raw.robobowss_keystore);
             try {
                 keystore.load(in, storePassword.toCharArray());
             } finally {
                 in.close();
             }
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
-            keyManagerFactory.init(keystore, keyPassword.toCharArray());
+            keyManagerFactory.init(keystore, keyPassword .toCharArray());
             TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
             tmf.init(keystore);
 
@@ -118,7 +145,7 @@ public class ServerTestActivity extends AppCompatActivity {
             throw new IllegalArgumentException();
         }
         return sslContext;
-    }
+    }*/
 
     private class WebSocketServerImpl extends  WebSocketServer {
 
@@ -128,30 +155,23 @@ public class ServerTestActivity extends AppCompatActivity {
 
         @Override
         public void onOpen(WebSocket conn, ClientHandshake handshake) {
-            manager.log(LogLvl.DEBUG, TAG, format("Open websocket connection %s", conn.getRemoteSocketAddress()));
+            System.out.println("New connection from: " + conn.getRemoteSocketAddress());
         }
 
         @Override
         public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-            manager.log(LogLvl.DEBUG, TAG, format("Closed websocket connection"));
+            System.out.println("Closed connection to: " + conn.getRemoteSocketAddress());
         }
 
         @Override
-        public void onMessage(WebSocket webSocketConnection, String message) {
-            if((message==null) || (message.length()==0)){
-                return;
-            }
-            manager.log(LogLvl.TRACE, TAG, format("Received message:%s|%s| from %s", message, message.substring(10), webSocketConnection.getRemoteSocketAddress()));
+        public void onMessage(WebSocket conn, String message) {
+            System.out.println("Received message: " + message + " from: " + conn.getRemoteSocketAddress());
         }
 
         @Override
         public void onError(WebSocket conn, Exception ex) {
+
             ex.printStackTrace();
-            if (conn != null) {
-                Log.e(TAG, format("Error WebSocket[local=%s, remote=%s]", conn.getLocalSocketAddress(), conn.getRemoteSocketAddress()), ex);
-            }else{
-                Log.e(TAG, "Error WebSocket, connection is null");
-            }
         }
     }
 }

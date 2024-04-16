@@ -422,6 +422,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
         if(this.remoteControlModule!=null){
             this.remoteControlModule.notifyDisconnection(connNumber);
         }
+        }
 
     }
 
