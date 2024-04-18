@@ -35,11 +35,16 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+
+import fi.iki.elonen.NanoHTTPD;
 
 public class ServerTestActivity extends AppCompatActivity {
     private static final String TAG="ServerTestActivity";
@@ -75,7 +80,6 @@ public class ServerTestActivity extends AppCompatActivity {
 
 
     public void startapp(){
-
         AssetManager assetManager = manager.getApplicationContext().getAssets();
         Properties properties = new Properties();
         try {
@@ -85,33 +89,30 @@ public class ServerTestActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        WebSocketServerImpl wsServer = new WebSocketServerImpl(8443);
+        WebSocketServerImpl wsServer = new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wssport","44304")));
 
-        // load up the key store
-        String STORETYPE = "BKS";
-        String STOREPASSWORD = "robobowss-pass";
-        String KEYPASSWORD = "robobowss-pass";
+        String KEYSTORE_TYPE = "BKS";
+        String KEYSTORE_PASS = "robobo-pass";
+        String KEY_PASS = "robobo-pass";
         try{
-            KeyStore ks = KeyStore.getInstance(STORETYPE);
-            InputStream in = getApplicationContext().getResources().openRawResource(R.raw.keystorewss);
-            try {
-                ks.load(in, STOREPASSWORD.toCharArray());
-            } finally {
-                in.close();
-            }
+            InputStream is = getApplicationContext().getResources().openRawResource(R.raw.robobowss_test);
+            KeyStore keyStore = KeyStore.getInstance(KEYSTORE_TYPE);
+            keyStore.load(is, KEYSTORE_PASS.toCharArray());
+            is.close();
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-            kmf.init(ks, KEYPASSWORD.toCharArray());
+            kmf.init(keyStore, KEY_PASS.toCharArray());
             TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
-            tmf.init(ks);
+            tmf.init(keyStore);
 
             SSLContext sslContext = null;
             sslContext = SSLContext.getInstance("TLS");
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
             wsServer.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
-
             wsServer.start();
+
+            System.out.println("Finished starting WSS server");
         } catch (Exception ex){
             System.out.println(ex);
         }
@@ -166,11 +167,11 @@ public class ServerTestActivity extends AppCompatActivity {
         @Override
         public void onMessage(WebSocket conn, String message) {
             System.out.println("Received message: " + message + " from: " + conn.getRemoteSocketAddress());
+            conn.send("Good boy, " + message + "!");
         }
 
         @Override
         public void onError(WebSocket conn, Exception ex) {
-
             ex.printStackTrace();
         }
     }
