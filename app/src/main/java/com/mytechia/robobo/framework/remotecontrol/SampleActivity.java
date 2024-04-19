@@ -19,8 +19,6 @@ import com.mytechia.robobo.rob.BluetoothRobInterfaceModule;
 import com.mytechia.robobo.rob.util.RoboboDeviceSelectionDialog;
 
 
-import org.java_websocket.client.WebSocketClient;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -41,10 +39,6 @@ public class                                                                    
 
 
     private IRemoteControlModule remoteModule;
-
-
-    private WebSocketClient ws ;
-
 
     public boolean onTouchEvent(MotionEvent event){
 
