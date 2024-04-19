@@ -17,15 +17,15 @@ import com.mytechia.robobo.framework.remote_control.remotemodule.Command;
 import com.mytechia.robobo.framework.remote_control.remotemodule.GsonConverter;
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
-import com.mytechia.robobo.framework.remotecontrol.ws.WebsocketRemoteControlModule;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
+
+import com.mytechia.robobo.framework.remotecontrol.ws.WebsocketSecureRemoteControlModule;
 
 
 public class ServerTestActivity extends AppCompatActivity {
     private static final String TAG="ServerTestActivity";
     private RoboboManager manager;
     IRemoteControlModule remoteModule;
-    WebsocketRemoteControlModule wsRemoteProxy;
 
     private TextView textview;
 
