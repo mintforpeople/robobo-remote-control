@@ -40,6 +40,4 @@ dependencies {
     implementation 'com.mytechia:opencv:4.3.0.2-my'
     implementation 'com.mytechia:robobo-vision:1.2.3-SNAPSHOT'
 
-    implementation 'org.nanohttpd:nanohttpd:2.2.0'
-
 }
