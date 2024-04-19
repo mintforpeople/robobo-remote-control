@@ -64,13 +64,13 @@ import static java.lang.String.format;
 /**
  * Implementation of the remote control module using websockets
  */
-public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModule {
+public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, IModule {
 
     public static final String PASSWORD = "PASSWORD";
 
     private RoboboManager roboboManager;
 
-    private String TAG = "Websocket RC Module";
+    private String TAG = "Websocket Secure RC Module";
 
     //all modifications to this collection must be synchronized
     private HashMap<Integer,WebSocket> connections= new HashMap<>();
@@ -81,15 +81,16 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
     private IRemoteControlModule remoteControlModule;
 
     private WebSocketServer webSocketServer;
-
-    private int port = 40404; // Loaded with properties
+    private WebSocketServer webSocketSecureServer;
 
     private boolean active = false;
     private boolean shuttingDown = false;
 
+    private Properties properties;
 
 
-    public WebsocketRemoteControlModule() {}
+
+    public WebsocketSecureRemoteControlModule() {}
 
 
     @Override
@@ -292,9 +293,9 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
                     statusError.putContents("error", "Incorrect password");
 
-                    WebsocketRemoteControlModule.this.notifyStatus(statusError);
+                    WebsocketSecureRemoteControlModule.this.notifyStatus(statusError);
 
-                    WebsocketRemoteControlModule.this.notifyStatus(new Status("DIE"));
+                    WebsocketSecureRemoteControlModule.this.notifyStatus(new Status("DIE"));
 
                 }
             } else if (connectionsAuthenticated.containsKey(webSocketConnection.hashCode())) {
@@ -331,14 +332,13 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
     private SSLContext getSSLConextFromAndroidKeystore(Context c) {
         // load up the key store
-        String storePassword = "robpass";
-        String keyPassword = "robpass";
-
+        String storePassword = properties.getProperty("keystore_pass");
+        String keyPassword = properties.getProperty("key_pass");
         KeyStore ks;
         SSLContext sslContext;
         try {
             KeyStore keystore = KeyStore.getInstance("BKS");
-            InputStream in = c.getResources().openRawResource(R.raw.keystorerobbks);
+            InputStream in = c.getResources().openRawResource(R.raw.robobo_local_ks);
             try {
                 keystore.load(in, storePassword.toCharArray());
             } finally {
@@ -371,7 +371,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
         this.remoteControlModule.registerRemoteControlProxy(this);
 
         AssetManager assetManager = manager.getApplicationContext().getAssets();
-        Properties properties = new Properties();
+        properties = new Properties();
         try {
             InputStream inputStream = assetManager.open("remote.properties");
             properties.load(inputStream);
@@ -379,14 +379,12 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
             e.printStackTrace();
         }
 
-
-
-
         this.webSocketServer= new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wsport","40404")));
-        this.webSocketServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSLConextFromAndroidKeystore(this.roboboManager.getApplicationContext()) ));
         this.webSocketServer.start();
 
-
+        this.webSocketSecureServer= new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wssport","44304")));
+        this.webSocketSecureServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSLConextFromAndroidKeystore(this.roboboManager.getApplicationContext()) ));
+        this.webSocketSecureServer.start();
     }
 
     @Override
@@ -403,6 +401,7 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
             }
 
             webSocketServer.stop();
+            webSocketSecureServer.stop();
         } catch (Exception ex) {
             Log.e(TAG, format("Error closing WebSocketServer", ex));
             roboboManager.log(LogLvl.ERROR, TAG, "Error closing WebSocketServer");
@@ -422,8 +421,6 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
         if(this.remoteControlModule!=null){
             this.remoteControlModule.notifyDisconnection(connNumber);
         }
-        }
-
     }
 
     @Override
@@ -433,6 +430,6 @@ public class WebsocketRemoteControlModule implements IRemoteControlProxy, IModul
 
     @Override
     public String getModuleVersion() {
-        return "0.3.1";
+        return "0.5.0";
     }
 }
