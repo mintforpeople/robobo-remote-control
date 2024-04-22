@@ -19,7 +19,7 @@ import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlM
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
 
-import com.mytechia.robobo.framework.remotecontrol.ws.WebsocketSecureRemoteControlModule;
+//import com.mytechia.robobo.framework.remotecontrol.ws.WebsocketSecureRemoteControlModule;
 
 
 public class ServerTestActivity extends AppCompatActivity {
