@@ -430,6 +430,6 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
 
     @Override
     public String getModuleVersion() {
-        return "1.1.0-SNAPSHOT";
+        return "1.1.1-SNAPSHOT";
     }
 }
