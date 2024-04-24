@@ -167,7 +167,7 @@ public class RemoteControlModule implements IRemoteControlModule {
 
     @Override
     public String getModuleVersion() {
-        return "1.1.5-SNAPSHOT";
+        return "1.1.1-SNAPSHOT";
     }
 
 }

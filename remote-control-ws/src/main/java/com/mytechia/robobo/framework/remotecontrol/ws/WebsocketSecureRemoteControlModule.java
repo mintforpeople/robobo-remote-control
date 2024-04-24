@@ -425,11 +425,11 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
 
     @Override
     public String getModuleInfo() {
-        return "WebSocket Secure Remote Control Module";
+        return "WebSocket Remote Control Module";
     }
 
     @Override
     public String getModuleVersion() {
-        return "1.1.5-SNAPSHOT";
+        return "1.1.1-SNAPSHOT";
     }
 }
