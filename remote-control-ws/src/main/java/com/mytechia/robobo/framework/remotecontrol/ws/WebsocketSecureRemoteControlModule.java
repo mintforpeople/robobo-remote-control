@@ -43,20 +43,29 @@ import org.java_websocket.server.WebSocketServer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.nio.channels.SelectionKey;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.security.PrivateKey;
+import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509KeyManager;
+import javax.net.ssl.X509TrustManager;
 
 import static java.lang.String.format;
 
@@ -231,7 +240,15 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
         }
 
         @Override
+        public boolean onConnect(SelectionKey key){
+            System.out.println(key);
+            return true;
+        }
+
+
+        @Override
         public void onOpen(WebSocket conn, ClientHandshake handshake) {
+            roboboManager.log(LogLvl.DEBUG, TAG, "Opening connection...");
 
             if (!isShuttingDown()) {
                 // Store connection  on the list
@@ -325,20 +342,32 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
 
         @Override
         public void onStart() {
-
+            System.out.println(this.getAddress());
         }
 
     }
 
-    private SSLContext getSSLConextFromAndroidKeystore(Context c) {
+    private SSLContext getSSContextFromAndroidKeystore(Context c) {
         // load up the key store
         String storePassword = properties.getProperty("keystore_pass");
         String keyPassword = properties.getProperty("key_pass");
         KeyStore ks;
         SSLContext sslContext;
+
+        TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+            }
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+            }
+        }
+        };
+
         try {
             KeyStore keystore = KeyStore.getInstance("BKS");
-            InputStream in = c.getResources().openRawResource(R.raw.robobo_local_ks);
+            InputStream in = c.getResources().openRawResource(R.raw.robobo_local_network_mkcert);
             try {
                 keystore.load(in, storePassword.toCharArray());
             } finally {
@@ -346,17 +375,18 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
             }
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
             keyManagerFactory.init(keystore, keyPassword .toCharArray());
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
-            tmf.init(keystore);
+            //TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+            //tmf.init(keystore);
 
             sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(keyManagerFactory.getKeyManagers(), tmf.getTrustManagers(), null);
+            sslContext.init(keyManagerFactory.getKeyManagers(), trustAllCerts, null);
         } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException e) {
             e.printStackTrace();
             throw new IllegalArgumentException();
         }
         return sslContext;
     }
+
     @Override
     public void startup(RoboboManager manager) throws InternalErrorException {
 
@@ -383,7 +413,7 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
         this.webSocketServer.start();
 
         this.webSocketSecureServer= new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wssport","44304")));
-        this.webSocketSecureServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSLConextFromAndroidKeystore(this.roboboManager.getApplicationContext()) ));
+        this.webSocketSecureServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSContextFromAndroidKeystore(this.roboboManager.getApplicationContext()) ));
         this.webSocketSecureServer.start();
     }
 
