@@ -16,6 +16,8 @@ import com.mytechia.robobo.framework.exception.ModuleNotFoundException;
 import com.mytechia.robobo.framework.remote_control.remotemodule.Command;
 import com.mytechia.robobo.framework.remote_control.remotemodule.GsonConverter;
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
+import com.mytechia.robobo.framework.remote_control.robobo_discovery.IRoboboDiscoveryModule;
+import com.mytechia.robobo.framework.remote_control.robobo_discovery.RoboboDiscoveryModule;
 import com.mytechia.robobo.framework.remote_control.remotemodule.Status;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
 
@@ -23,7 +25,6 @@ public class ServerTestActivity extends AppCompatActivity {
     private static final String TAG="ServerTestActivity";
     private RoboboManager manager;
     IRemoteControlModule remoteModule;
-
     private TextView textview;
 
     @Override
@@ -51,7 +52,12 @@ public class ServerTestActivity extends AppCompatActivity {
 
 
     public void startapp(){
-
+        try {
+            RoboboDiscoveryModule discoveryModule = (RoboboDiscoveryModule)manager.getModuleInstance(IRoboboDiscoveryModule.class);
+            discoveryModule.setRoboboBTName("ROB-DAD");
+        } catch (ModuleNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
