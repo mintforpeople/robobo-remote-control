@@ -54,7 +54,6 @@ public class ServerTestActivity extends AppCompatActivity {
     public void startapp(){
         try {
             RoboboDiscoveryModule discoveryModule = (RoboboDiscoveryModule)manager.getModuleInstance(IRoboboDiscoveryModule.class);
-            discoveryModule.setRoboboBTName("ROB-DAD");
         } catch (ModuleNotFoundException e) {
             throw new RuntimeException(e);
         }
