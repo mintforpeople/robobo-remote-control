@@ -1,2 +1,2 @@
-include ':app', ':remote-control', ':remote-control-ws'
+include ':app', ':remote-control', ':remote-control-ws', ':remote-control-ros'
 include ':robobo-discovery'

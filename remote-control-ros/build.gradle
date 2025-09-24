@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion 33
@@ -6,8 +7,6 @@ android {
     defaultConfig {
         minSdkVersion 22
         targetSdkVersion 33
-        versionCode 22
-        versionName "1.5.0-SNAPSHOT"
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
@@ -18,10 +17,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    lintOptions {
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+    namespace 'com.mytechia.robobo.framework.remotecontrol.ros'
+    lint {
         disable 'InvalidPackage'
-        abortOnError false
-
     }
 }
 version = VERSION_NAME
@@ -46,6 +50,9 @@ dependencies {
     implementation 'org.ros.android_core:android_10:0.3.3'
     implementation('org.ros.rosjava_messages:std_msgs:0.5.11')
     implementation('org.ros.rosjava_messages:geometry_msgs:1.12.7')
+
+    implementation('gradle.plugin.org.ros2.tools.gradle:ament:0.7.0')
+    implementation('me.tatarka:gradle-retrolambda:3.6.1')
 
     implementation files('libs/robobo_msgs-1.2.2.jar')
     implementation files('libs/aruco_msgs-0.2.3.jar')
