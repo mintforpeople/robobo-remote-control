@@ -83,6 +83,8 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
     private WebSocketServer webSocketServer;
     private WebSocketServer webSocketSecureServer;
 
+    private RoboboHttpsServer httpsServer;
+
     private boolean active = false;
     private boolean shuttingDown = false;
 
@@ -385,6 +387,19 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
         this.webSocketSecureServer= new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wssport","44304")));
         this.webSocketSecureServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSLConextFromAndroidKeystore(this.roboboManager.getApplicationContext()) ));
         this.webSocketSecureServer.start();
+
+        try {
+            this.httpsServer = new RoboboHttpsServer(
+                    44300,
+                    this.roboboManager.getApplicationContext(),
+                    R.raw.robobo_local_ks,
+                    properties.getProperty("keystore_pass"),
+                    properties.getProperty("key_pass")
+            );
+            httpsServer.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
