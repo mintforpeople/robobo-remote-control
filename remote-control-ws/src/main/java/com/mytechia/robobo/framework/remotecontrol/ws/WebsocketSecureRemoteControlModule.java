@@ -42,13 +42,18 @@ import org.java_websocket.server.WebSocketServer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -257,7 +262,7 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
                 removeSocketConnection(conn);
                 // Send notification of the disconnection
                 notifyDisconnection(conn.hashCode());
-
+                Log.d("WSS", "Closed: " + code + " / " + reason + " / remote=" + remote);
                 roboboManager.log(LogLvl.DEBUG, TAG, format("Closed websocket connection"));
             }
         }
@@ -327,9 +332,24 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
 
         @Override
         public void onStart() {
-
+            try {
+                roboboManager.log(LogLvl.DEBUG, TAG, format("Starting websocket server on %s:%s", getLocalIpv4().toString(), getAddress().getPort()));
+            } catch (SocketException e) {
+                throw new RuntimeException(e);
+            }
         }
 
+    }
+
+    private String getLocalIpv4() throws SocketException {
+        for (NetworkInterface ni : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+            for (InetAddress addr : Collections.list(ni.getInetAddresses())) {
+                if (!addr.isLoopbackAddress() && addr instanceof Inet4Address) {
+                    return addr.getHostAddress();
+                }
+            }
+        }
+        return null;
     }
 
     private SSLContext getSSLConextFromAndroidKeystore(Context c) {
@@ -382,10 +402,12 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
         }
 
         this.webSocketServer= new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wsport","40404")));
+        this.webSocketServer.setReuseAddr(true);
         this.webSocketServer.start();
 
         this.webSocketSecureServer= new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wssport","44304")));
         this.webSocketSecureServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSLConextFromAndroidKeystore(this.roboboManager.getApplicationContext()) ));
+        this.webSocketSecureServer.setReuseAddr(true);
         this.webSocketSecureServer.start();
 
         try {
@@ -409,12 +431,10 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
 
         try {
             Iterator it = connections.entrySet().iterator();
-
             while (it.hasNext()){
                 Map.Entry pair = (Map.Entry)it.next();
-                ((WebSocket)pair.getValue()).close();
+                ((WebSocket)pair.getValue()).close(1000, "Normal closure");
             }
-
             webSocketServer.stop();
             webSocketSecureServer.stop();
         } catch (Exception ex) {
@@ -424,7 +444,6 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
     }
 
     protected void notifyConnection(int connNumber){
-
         if(this.remoteControlModule!=null){
             this.remoteControlModule.notifyConnection(connNumber);
         }
