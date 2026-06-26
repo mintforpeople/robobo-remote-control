@@ -3,12 +3,6 @@ package com.mytechia.robobo.framework.remote_control.robobo_discovery;
 import com.mytechia.commons.framework.exception.InternalErrorException;
 import com.mytechia.robobo.framework.RoboboManager;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-
 public class RoboboDiscoveryModule implements IRoboboDiscoveryModule{
     String TAG = "Robobo Discovery Module";
     String version = "0.0.1-SNAPSHOT";

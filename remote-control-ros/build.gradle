@@ -38,9 +38,8 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation "com.google.guava:guava:23.0"
-    implementation 'commons-logging:commons-logging:1.2'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation "com.google.guava:guava:33.5.0-android"
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     testImplementation 'junit:junit:4.13.2'
 //    api project(path:':remote-control', configuration:'archives')
     //implementation project(path:':remote-control')
@@ -52,7 +51,7 @@ dependencies {
     implementation('org.ros.rosjava_messages:geometry_msgs:1.12.7')
 
     implementation('gradle.plugin.org.ros2.tools.gradle:ament:0.7.0')
-    implementation('me.tatarka:gradle-retrolambda:3.6.1')
+    implementation('me.tatarka:gradle-retrolambda:3.7.1')
 
     implementation files('libs/robobo_msgs-1.2.2.jar')
     implementation files('libs/aruco_msgs-0.2.3.jar')

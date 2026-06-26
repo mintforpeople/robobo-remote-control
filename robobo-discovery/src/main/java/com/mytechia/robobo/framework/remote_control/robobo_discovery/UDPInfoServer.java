@@ -2,8 +2,6 @@ package com.mytechia.robobo.framework.remote_control.robobo_discovery;
 
 import com.mytechia.robobo.framework.RoboboManager;
 
-import org.json.JSONObject;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
