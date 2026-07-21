@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     defaultConfig {
         minSdkVersion 22
-        targetSdkVersion 33
+        targetSdkVersion 34
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
@@ -28,33 +28,49 @@ android {
         disable 'InvalidPackage'
     }
 }
+
 version = VERSION_NAME
 
 group = GROUP
-//  OJO CON SUBIR LA VERSION DEL PLUGIN DE GRADLE
-// https://github.com/rosjava/android_core/issues/300
+
 dependencies {
-//    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    // Essential logging dependencies first for IDE resolution
+    api 'commons-logging:commons-logging:1.1.1'
+    api 'commons-httpclient:commons-httpclient:3.1'
+    api 'commons-net:commons-net:2.0'
+
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation "com.google.guava:guava:33.5.0-android"
     implementation 'androidx.appcompat:appcompat:1.7.1'
     testImplementation 'junit:junit:4.13.2'
-//    api project(path:':remote-control', configuration:'archives')
-    //implementation project(path:':remote-control')
-    implementation 'com.mytechia:robobo-remote-control:1.0.2' //This was the project, not the repo
+    
+    implementation 'com.mytechia:robobo-remote-control:1.0.2'
 
-    implementation 'org.ros.rosjava_core:rosjava:0.3.6'
-    implementation 'org.ros.android_core:android_10:0.3.3'
+    // ROS core libraries
+    api('org.ros.rosjava_core:rosjava:0.3.6') {
+        exclude group: 'org.apache.commons'
+    }
+    api('org.ros.android_core:android_10:0.3.3') {
+        exclude group: 'org.apache.commons'
+    }
+    
     implementation('org.ros.rosjava_messages:std_msgs:0.5.11')
     implementation('org.ros.rosjava_messages:geometry_msgs:1.12.7')
+    implementation('org.ros.rosjava_messages:nav_msgs:1.12.7')
 
-    implementation('gradle.plugin.org.ros2.tools.gradle:ament:0.7.0')
-    implementation('me.tatarka:gradle-retrolambda:3.7.1')
+    implementation('gradle.plugin.org.ros2.tools.gradle:ament:0.7.0') {
+        exclude group: 'com.android.tools.build', module: 'gradle'
+        exclude group: 'org.apache.commons'
+    }
+    
+    // Required for ROS message classes
+    api 'org.ros.rosjava_bootstrap:message_generation:0.3.3'
 
-    implementation files('libs/robobo_msgs-1.2.2.jar')
-    implementation files('libs/aruco_msgs-0.2.3.jar')
-    implementation files('libs/opencv_apps-2.0.1.jar')
-    implementation files('libs/vision_msgs-0.0.1.jar')
+    // Local JAR dependencies
+    api files('libs/robobo_msgs-1.2.2.jar')
+    api files('libs/aruco_msgs-0.2.3.jar')
+    api files('libs/opencv_apps-2.0.1.jar')
+    api files('libs/vision_msgs-0.0.1.jar')
 }

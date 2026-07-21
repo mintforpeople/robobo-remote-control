@@ -3,6 +3,14 @@ apply plugin: 'com.android.application'
 android {
     namespace = "com.mytechia.robobo.framework.remotecontrol"
     compileSdkVersion 33
+    configurations.all {
+        resolutionStrategy {
+            // Force SLF4J 1.7.x — logback-android doesn't support the SLF4J 2.x
+            // ServiceLoader-based provider mechanism. Without this, Java-WebSocket
+            // and jmdns pull in SLF4J 2.x and logback can't register as a provider.
+            force 'org.slf4j:slf4j-api:1.7.36'
+        }
+    }
     defaultConfig {
         applicationId "com.mytechia.robobo.framework.remotecontrol"
         minSdkVersion 24
@@ -24,6 +32,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -35,4 +44,5 @@ dependencies {
 
     implementation project(':remote-control-ws')
     implementation project(':robobo-discovery')
+    implementation project(':remote-mdns')
 }

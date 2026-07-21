@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.mytechia.robobo.framework.RoboboManager;
 import com.mytechia.robobo.framework.exception.ModuleNotFoundException;
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
+import com.mytechia.robobo.framework.remotecontrol.remote_mdns.IRemoteMDNSModule;
+import com.mytechia.robobo.framework.remotecontrol.remote_mdns.RemoteMDNSModule;
 import com.mytechia.robobo.framework.remotecontrol.robobo_discovery.IRoboboDiscoveryModule;
 import com.mytechia.robobo.framework.remotecontrol.robobo_discovery.RoboboDiscoveryModule;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
@@ -47,6 +49,7 @@ public class ServerTestActivity extends AppCompatActivity {
     public void startapp(){
         try {
             RoboboDiscoveryModule discoveryModule = (RoboboDiscoveryModule)manager.getModuleInstance(IRoboboDiscoveryModule.class);
+            RemoteMDNSModule mdnsModule = (RemoteMDNSModule) manager.getModuleInstance(IRemoteMDNSModule.class);
         } catch (ModuleNotFoundException e) {
             throw new RuntimeException(e);
         }
