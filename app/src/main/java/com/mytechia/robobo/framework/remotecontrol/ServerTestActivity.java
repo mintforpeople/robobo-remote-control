@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.mytechia.robobo.framework.RoboboManager;
 import com.mytechia.robobo.framework.exception.ModuleNotFoundException;
 import com.mytechia.robobo.framework.remote_control.remotemodule.IRemoteControlModule;
-import com.mytechia.robobo.framework.remote_control.robobo_discovery.IRoboboDiscoveryModule;
-import com.mytechia.robobo.framework.remote_control.robobo_discovery.RoboboDiscoveryModule;
+import com.mytechia.robobo.framework.remotecontrol.robobo_discovery.IRoboboDiscoveryModule;
+import com.mytechia.robobo.framework.remotecontrol.robobo_discovery.RoboboDiscoveryModule;
 import com.mytechia.robobo.framework.service.RoboboServiceHelper;
 
 public class ServerTestActivity extends AppCompatActivity {

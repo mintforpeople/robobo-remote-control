@@ -1,4 +1,4 @@
-package com.mytechia.robobo.framework.remote_control.remote_mdns;
+package com.mytechia.robobo.framework.remotecontrol.remote_mdns;
 
 import com.mytechia.robobo.framework.IModule;
 
