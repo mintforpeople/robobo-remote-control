@@ -19,7 +19,7 @@ import javax.jmdns.ServiceInfo;
 
 public class RemoteMDNSModule implements IRemoteMDNSModule {
     String TAG = "Robobo MDNS Module";
-    String version = "0.0.1-SNAPSHOT";
+    String version = "0.0.5-SNAPSHOT";
 
     private final AtomicReference<JmDNS> jmdnsRef = new AtomicReference<>(null);
     private Thread startupThread;
@@ -35,52 +35,7 @@ public class RemoteMDNSModule implements IRemoteMDNSModule {
 
     @Override
     public void startup(RoboboManager manager) throws InternalErrorException {
-        loadProperties(manager.getApplicationContext().getAssets());
 
-        // JmDNS.create() and registerService() perform synchronous network I/O
-        // (creating multicast sockets, sending DNS-SD messages). Running them on
-        // the main thread would cause NetworkOnMainThreadException. Offload to a
-        // background thread instead.
-        startupThread = new Thread(() -> {
-            try {
-                // Create JmDNS with custom hostname (will advertise as robobo-000.local)
-                InetAddress addr = InetAddress.getLocalHost();
-                JmDNS instance = JmDNS.create(addr, mdnsHostname);
-                jmdnsRef.set(instance);
-
-                // Update service instance name to include the robot name (mirrors RoboboDiscoveryModule)
-                String serviceName = "Robobo " + roboboBTName.substring(4); // e.g., "Robobo 000" from "ROB-000"
-                if (!roboboBTName.startsWith("ROB-")) {
-                    serviceName = "Robobo " + roboboBTName;
-                }
-
-                ServiceInfo serviceInfo = ServiceInfo.create(
-                        serviceType, serviceName, mdnsServicePort, "id=" + roboboBTName);
-                instance.registerService(serviceInfo);
-
-                Log.i(TAG, "mDNS service registered: " + serviceName + " on " + mdnsHostname + ".local:" + mdnsServicePort);
-                Log.i(TAG, "Service type: " + serviceType);
-                Log.i(TAG, "Discoverable at: " + mdnsHostname + ".local (mDNS hostname)");
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to start mDNS module", e);
-            }
-        }, "mdns-startup");
-        startupThread.start();
-    }
-
-    private void loadProperties(AssetManager assetManager) {
-        Properties properties = new Properties();
-        try (InputStream inputStream = assetManager.open("remote.properties")) {
-            properties.load(inputStream);
-            // Load mDNS configuration from properties (with defaults)
-            mdnsHostname = properties.getProperty("mdns.hostname", "robobo-000");
-            mdnsServicePort = Integer.parseInt(properties.getProperty("mdns.port", "44304"));
-            serviceInstanceName = properties.getProperty("mdns.service_name", "Robobo 000");
-            serviceType = properties.getProperty("mdns.service_type", "_robobo._tcp.local.");
-            Log.i(TAG, "Loaded mDNS config: hostname=" + mdnsHostname + ", port=" + mdnsServicePort + ", service=" + serviceInstanceName);
-        } catch (IOException e) {
-            Log.w(TAG, "Could not load remote.properties for mDNS config, using defaults: " + e.getMessage());
-        }
     }
 
     @Override
@@ -120,8 +75,38 @@ public class RemoteMDNSModule implements IRemoteMDNSModule {
         // Update derived values
         if (roboboBTName.startsWith("ROB-")) {
             this.serviceInstanceName = "Robobo " + roboboBTName.substring(4);
+            this.mdnsHostname = "robobo-" + roboboBTName.substring(4).toLowerCase();
         } else {
             this.serviceInstanceName = "Robobo " + roboboBTName;
+            this.mdnsHostname = "robobo-" + roboboBTName.substring(4).toLowerCase();
         }
+    }
+
+    public void startMDNSServer(){
+        startupThread = new Thread(() -> {
+            try {
+                // Create JmDNS with custom hostname (will advertise as robobo-000.local)
+                InetAddress addr = InetAddress.getLocalHost();
+                JmDNS instance = JmDNS.create(addr, mdnsHostname);
+                jmdnsRef.set(instance);
+
+                // Update service instance name to include the robot name (mirrors RoboboDiscoveryModule)
+                String serviceName = "Robobo " + roboboBTName.substring(4); // e.g., "Robobo 000" from "ROB-000"
+                if (!roboboBTName.startsWith("ROB-")) {
+                    serviceName = "Robobo " + roboboBTName;
+                }
+
+                ServiceInfo serviceInfo = ServiceInfo.create(
+                        serviceType, serviceName, mdnsServicePort, "id=" + roboboBTName);
+                instance.registerService(serviceInfo);
+
+                Log.i(TAG, "mDNS service registered: " + serviceName + " on " + mdnsHostname + ".local:" + mdnsServicePort);
+                Log.i(TAG, "Service type: " + serviceType);
+                Log.i(TAG, "Discoverable at: " + mdnsHostname + ".local (mDNS hostname)");
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to start mDNS module", e);
+            }
+        }, "mdns-startup");
+        startupThread.start();
     }
 }
