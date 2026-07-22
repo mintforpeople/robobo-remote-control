@@ -7,4 +7,6 @@ public interface IRemoteMDNSModule extends IModule {
     String getRoboboBTName();
 
     void setRoboboBTName(String roboboBTName);
+
+    void startMDNSServer();
 }

@@ -19,7 +19,7 @@ import javax.jmdns.ServiceInfo;
 
 public class RemoteMDNSModule implements IRemoteMDNSModule {
     String TAG = "Robobo MDNS Module";
-    String version = "0.0.5-SNAPSHOT";
+    String version = "0.0.6-SNAPSHOT";
 
     private final AtomicReference<JmDNS> jmdnsRef = new AtomicReference<>(null);
     private Thread startupThread;
@@ -82,6 +82,7 @@ public class RemoteMDNSModule implements IRemoteMDNSModule {
         }
     }
 
+    @Override
     public void startMDNSServer(){
         startupThread = new Thread(() -> {
             try {
