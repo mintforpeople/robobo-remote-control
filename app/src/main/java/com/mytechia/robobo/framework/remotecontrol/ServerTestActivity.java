@@ -50,7 +50,6 @@ public class ServerTestActivity extends AppCompatActivity {
         try {
             RoboboDiscoveryModule discoveryModule = (RoboboDiscoveryModule)manager.getModuleInstance(IRoboboDiscoveryModule.class);
             RemoteMDNSModule mdnsModule = (RemoteMDNSModule) manager.getModuleInstance(IRemoteMDNSModule.class);
-
             mdnsModule.setRoboboBTName("ROB-7VH");
             // We EXPLICITLY start the mdns server after setting the BT Name!!!
             mdnsModule.startMDNSServer();

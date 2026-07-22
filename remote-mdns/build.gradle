@@ -40,7 +40,7 @@ dependencies {
 
     implementation project(':remote-control')
 
-    implementation("org.jmdns:jmdns:3.6.3")
+    implementation("org.jmdns:jmdns:3.5.8")
 }
 
 

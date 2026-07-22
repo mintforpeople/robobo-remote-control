@@ -45,4 +45,6 @@ dependencies {
     implementation project(':remote-control-ws')
     implementation project(':robobo-discovery')
     implementation project(':remote-mdns')
+
+    implementation("org.jmdns:jmdns:3.5.8")
 }
