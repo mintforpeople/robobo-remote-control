@@ -17,20 +17,20 @@ public class RoboboMDNSServer {
     private WifiManager.MulticastLock multicastLock;
     private JmDNS jmdns;
 
-    private String serviceName = "robobo-000";
+    private String serviceName = "rob-000";
     private final String serviceAddress = "_robobo._tcp.local.";
-    private String robotName = "robobo-000";
+    private String robotName = "rob-000";
     private String roboboBTName = "ROB-000";
 
     public void setRoboboBTName(String roboboBTName) {
         this.roboboBTName = roboboBTName;
         // Update derived values
         if (roboboBTName.startsWith("ROB-")) {
-            this.serviceName = "robobo-" + roboboBTName.substring(4).toLowerCase();
-            this.robotName = "robobo-" + roboboBTName.substring(4).toLowerCase();
+            this.serviceName = "rob-" + roboboBTName.substring(4).toLowerCase();
+            this.robotName = "rob-" + roboboBTName.substring(4).toLowerCase();
         } else {
-            this.serviceName = "robobo-" + roboboBTName.toLowerCase();
-            this.robotName = "robobo-" + roboboBTName.toLowerCase();
+            this.serviceName = "rob-" + roboboBTName.toLowerCase();
+            this.robotName = "rob-" + roboboBTName.toLowerCase();
         }
     }
 
