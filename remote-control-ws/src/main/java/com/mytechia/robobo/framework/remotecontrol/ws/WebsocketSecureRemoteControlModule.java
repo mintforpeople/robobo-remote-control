@@ -93,8 +93,6 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
     private WebSocketServer webSocketServer;
     private WebSocketServer webSocketSecureServer;
 
-    private RoboboHttpsServer httpsServer;
-
     private boolean active = false;
     private boolean shuttingDown = false;
 
@@ -109,7 +107,14 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
 
     @Override
     public void setRoboboBTName(String roboboBTName) {
+        String oldName = this.roboboBTName;
         this.roboboBTName = roboboBTName;
+
+        if (roboboBTName != null && !roboboBTName.trim().isEmpty() && !roboboBTName.equals("ROB-???")) {
+            if (!roboboBTName.equals(oldName) || webSocketSecureServer == null) {
+                startWssServer();
+            }
+        }
     }
 
 
@@ -372,20 +377,19 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
             return;
         }
 
+        if (roboboBTName == null || roboboBTName.trim().isEmpty() || roboboBTName.equals("ROB-???")) {
+            roboboManager.log(LogLvl.DEBUG, TAG, "WSS server deferred: waiting for valid Robobo BT Name to be set.");
+            return;
+        }
+
         if (webSocketSecureServer != null) {
             try {
                 webSocketSecureServer.stop();
             } catch (Exception ignored) {}
         }
-        if (httpsServer != null) {
-            try {
-                httpsServer.stop();
-            } catch (Exception ignored) {}
-        }
 
         Context context = roboboManager.getApplicationContext();
         String storePassword = properties != null ? properties.getProperty("keystore_pass", "robobo-pass") : "robobo-pass";
-        String keyPassword = properties != null ? properties.getProperty("key_pass", "robobo-pass") : "robobo-pass";
         int wssPort = properties != null ? Integer.parseInt(properties.getProperty("wssport", "44304")) : 44304;
 
         RoboboManifest manifest = null;
@@ -395,7 +399,7 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
             // Optional manifest file
         }
 
-        String targetRobotId = (roboboBTName != null && !roboboBTName.equals("ROB-???")) ? roboboBTName : (properties != null ? properties.getProperty("robot_id", properties.getProperty("robot_alias", null)) : null);
+        String targetRobotId = roboboBTName;
 
         try {
             InputStream bksIn = context.getResources().openRawResource(R.raw.robobo_local_ks);
@@ -411,21 +415,10 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
             this.webSocketSecureServer.setReuseAddr(true);
             this.webSocketSecureServer.start();
 
-            this.httpsServer = new RoboboHttpsServer(
-                    44300,
-                    context,
-                    R.raw.robobo_local_ks,
-                    storePassword,
-                    keyPassword,
-                    targetRobotId,
-                    manifest
-            );
-            this.httpsServer.start();
-
-            roboboManager.log(LogLvl.DEBUG, TAG, "WSS and HTTPS servers started using identity for: " + (targetRobotId != null ? targetRobotId : "default"));
+            roboboManager.log(LogLvl.DEBUG, TAG, "WSS server started using identity for: " + targetRobotId);
         } catch (Exception e) {
-            Log.e(TAG, "Error starting WSS and HTTPS servers", e);
-            roboboManager.log(LogLvl.ERROR, TAG, "Error starting WSS and HTTPS servers: " + e.getMessage());
+            Log.e(TAG, "Error starting WSS server", e);
+            roboboManager.log(LogLvl.ERROR, TAG, "Error starting WSS server: " + e.getMessage());
         }
     }
 
@@ -470,7 +463,9 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
                 ((WebSocket)pair.getValue()).close(1000, "Normal closure");
             }
             webSocketServer.stop();
-            webSocketSecureServer.stop();
+            if (webSocketSecureServer != null) {
+                webSocketSecureServer.stop();
+            }
         } catch (Exception ex) {
             Log.e(TAG, format("Error closing WebSocketServer", ex));
             roboboManager.log(LogLvl.ERROR, TAG, "Error closing WebSocketServer");

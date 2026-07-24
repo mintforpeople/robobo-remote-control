@@ -47,19 +47,33 @@ public class RoboboKeyManager extends X509ExtendedKeyManager {
         return chooseClientAlias(keyType, issuers, null);
     }
 
+    private static final String TAG = "RoboboKeyManager";
+
     @Override
     public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket) {
         if (chosenAlias != null) {
-            return chosenAlias;
+            if (delegate.getPrivateKey(chosenAlias) != null) {
+                android.util.Log.d(TAG, "Serving certificate for configured alias: " + chosenAlias);
+                return chosenAlias;
+            } else {
+                android.util.Log.w(TAG, "Configured alias '" + chosenAlias + "' requested, but private key was NOT found in BKS Keystore!");
+            }
         }
-        return delegate.chooseServerAlias(keyType, issuers, socket);
+        String fallback = delegate.chooseServerAlias(keyType, issuers, socket);
+        android.util.Log.w(TAG, "FALLBACK: Serving default certificate alias: " + fallback);
+        return fallback;
     }
 
     @Override
     public String chooseEngineServerAlias(String keyType, Principal[] issuers, SSLEngine engine) {
-        // 1. Explicitly configured robot alias takes top priority
+        // 1. Explicitly configured robot alias takes top priority if valid key exists
         if (chosenAlias != null) {
-            return chosenAlias;
+            if (delegate.getPrivateKey(chosenAlias) != null) {
+                android.util.Log.d(TAG, "Serving certificate for configured alias: " + chosenAlias);
+                return chosenAlias;
+            } else {
+                android.util.Log.w(TAG, "Configured alias '" + chosenAlias + "' requested, but private key was NOT found in BKS Keystore!");
+            }
         }
 
         // 2. SNI (Server Name Indication) dynamic extraction during TLS handshake
@@ -73,6 +87,7 @@ public class RoboboKeyManager extends X509ExtendedKeyManager {
                             String hostname = ((SNIHostName) name).getAsciiName();
                             String aliasFromSni = extractAliasFromHostname(hostname);
                             if (aliasFromSni != null && delegate.getPrivateKey(aliasFromSni) != null) {
+                                android.util.Log.d(TAG, "Serving certificate for SNI hostname '" + hostname + "' -> alias: " + aliasFromSni);
                                 return aliasFromSni;
                             }
                         }
@@ -82,10 +97,14 @@ public class RoboboKeyManager extends X509ExtendedKeyManager {
         }
 
         // 3. Fallback to default Java KeyManager selection
+        String fallbackAlias = null;
         if (delegate instanceof X509ExtendedKeyManager) {
-            return ((X509ExtendedKeyManager) delegate).chooseEngineServerAlias(keyType, issuers, engine);
+            fallbackAlias = ((X509ExtendedKeyManager) delegate).chooseEngineServerAlias(keyType, issuers, engine);
+        } else {
+            fallbackAlias = chooseServerAlias(keyType, issuers, null);
         }
-        return chooseServerAlias(keyType, issuers, null);
+        android.util.Log.w(TAG, "FALLBACK: Serving default certificate alias: " + fallbackAlias);
+        return fallbackAlias;
     }
 
     /**

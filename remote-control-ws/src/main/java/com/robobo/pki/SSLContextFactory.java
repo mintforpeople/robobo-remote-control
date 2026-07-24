@@ -56,6 +56,8 @@ public class SSLContextFactory {
             }
         }
 
+        android.util.Log.d("SSLContextFactory", "Creating TLS SSLContext - Target Robot ID: '" + targetRobotId + "', Resolved Alias: '" + chosenAlias + "'");
+
         // 2. Load BKS KeyStore containing client/server certificates and Root CA
         KeyStore bksStore = KeyStore.getInstance("BKS");
         try {

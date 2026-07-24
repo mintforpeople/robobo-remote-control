@@ -53,7 +53,7 @@ public class ServerTestActivity extends AppCompatActivity {
             com.mytechia.robobo.framework.remotecontrol.ws.WebsocketSecureRemoteControlModule wsModule = 
                     (com.mytechia.robobo.framework.remotecontrol.ws.WebsocketSecureRemoteControlModule) manager.getModuleInstance(com.mytechia.robobo.framework.remotecontrol.ws.IWebsocketSecureRemoteControlModule.class);
 
-            String robotName = "ROB-7VH";
+            String robotName = "ROB-7VT";
 
             if (discoveryModule != null) {
                 discoveryModule.setRoboboBTName(robotName);
