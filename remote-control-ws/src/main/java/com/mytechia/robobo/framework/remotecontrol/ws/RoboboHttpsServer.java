@@ -26,25 +26,22 @@ public class RoboboHttpsServer extends NanoHTTPD {
 
     public RoboboHttpsServer(int port, Context context, int keystoreResId,
                              String storePassword, String keyPassword) throws IOException {
+        this(port, context, keystoreResId, storePassword, keyPassword, null, null);
+    }
+
+    public RoboboHttpsServer(int port, Context context, int keystoreResId,
+                             String storePassword, String keyPassword,
+                             String robotId, com.robobo.pki.RoboboManifest manifest) throws IOException {
         super(port);
 
         try {
-            // Load BKS keystore
-            KeyStore keystore = KeyStore.getInstance("BKS");
-            try (InputStream in = context.getResources().openRawResource(keystoreResId)) {
-                keystore.load(in, storePassword.toCharArray());
-            }
-
-            // KeyManager / TrustManager
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-            kmf.init(keystore, keyPassword.toCharArray());
-
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
-            tmf.init(keystore);
-
-            // SSLContext
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+            InputStream in = context.getResources().openRawResource(keystoreResId);
+            SSLContext sslContext = com.robobo.pki.SSLContextFactory.createSSLContextFromBks(
+                    in,
+                    storePassword.toCharArray(),
+                    robotId,
+                    manifest
+            );
 
             // Pass SSLContext's factory to NanoHTTPD
             makeSecure(sslContext.getServerSocketFactory(), null);

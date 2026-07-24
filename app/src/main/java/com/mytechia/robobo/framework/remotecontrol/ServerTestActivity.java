@@ -50,9 +50,24 @@ public class ServerTestActivity extends AppCompatActivity {
         try {
             RoboboDiscoveryModule discoveryModule = (RoboboDiscoveryModule)manager.getModuleInstance(IRoboboDiscoveryModule.class);
             RemoteMDNSModule mdnsModule = (RemoteMDNSModule) manager.getModuleInstance(IRemoteMDNSModule.class);
-            mdnsModule.setRoboboBTName("ROB-7VH");
-            // We EXPLICITLY start the mdns server after setting the BT Name!!!
-            mdnsModule.startMDNSServer();
+            com.mytechia.robobo.framework.remotecontrol.ws.WebsocketSecureRemoteControlModule wsModule = 
+                    (com.mytechia.robobo.framework.remotecontrol.ws.WebsocketSecureRemoteControlModule) manager.getModuleInstance(com.mytechia.robobo.framework.remotecontrol.ws.IWebsocketSecureRemoteControlModule.class);
+
+            String robotName = "ROB-7VH";
+
+            if (discoveryModule != null) {
+                discoveryModule.setRoboboBTName(robotName);
+            }
+
+            if (mdnsModule != null) {
+                mdnsModule.setRoboboBTName(robotName);
+                mdnsModule.startMDNSServer();
+            }
+
+            if (wsModule != null) {
+                wsModule.setRoboboBTName(robotName);
+                wsModule.startWssServer();
+            }
         } catch (ModuleNotFoundException e) {
             throw new RuntimeException(e);
         }

@@ -63,19 +63,24 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import com.robobo.pki.RoboboManifest;
+import com.robobo.pki.SSLContextFactory;
+
 import static java.lang.String.format;
 
 
 /**
  * Implementation of the remote control module using websockets
  */
-public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, IModule {
+public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemoteControlModule, IRemoteControlProxy {
 
     public static final String PASSWORD = "PASSWORD";
 
     private RoboboManager roboboManager;
 
     private String TAG = "Websocket Secure RC Module";
+
+    private String roboboBTName = "ROB-???";
 
     //all modifications to this collection must be synchronized
     private HashMap<Integer,WebSocket> connections= new HashMap<>();
@@ -95,9 +100,17 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
 
     private Properties properties;
 
-
-
     public WebsocketSecureRemoteControlModule() {}
+
+    @Override
+    public String getRoboboBTName() {
+        return roboboBTName;
+    }
+
+    @Override
+    public void setRoboboBTName(String roboboBTName) {
+        this.roboboBTName = roboboBTName;
+    }
 
 
     @Override
@@ -352,33 +365,70 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
         return null;
     }
 
-    private SSLContext getSSLConextFromAndroidKeystore(Context c) {
-        // load up the key store
-        String storePassword = properties.getProperty("keystore_pass");
-        String keyPassword = properties.getProperty("key_pass");
-        KeyStore ks;
-        SSLContext sslContext;
-        try {
-            KeyStore keystore = KeyStore.getInstance("BKS");
-            InputStream in = c.getResources().openRawResource(R.raw.robobo_local_ks);
-            try {
-                keystore.load(in, storePassword.toCharArray());
-            } finally {
-                in.close();
-            }
-            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("X509");
-            keyManagerFactory.init(keystore, keyPassword .toCharArray());
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
-            tmf.init(keystore);
-
-            sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(keyManagerFactory.getKeyManagers(), tmf.getTrustManagers(), null);
-        } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException | KeyManagementException | UnrecoverableKeyException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException();
+    @Override
+    public void startWssServer() {
+        if (roboboManager == null) {
+            Log.e(TAG, "Cannot start WSS server: RoboboManager is null.");
+            return;
         }
-        return sslContext;
+
+        if (webSocketSecureServer != null) {
+            try {
+                webSocketSecureServer.stop();
+            } catch (Exception ignored) {}
+        }
+        if (httpsServer != null) {
+            try {
+                httpsServer.stop();
+            } catch (Exception ignored) {}
+        }
+
+        Context context = roboboManager.getApplicationContext();
+        String storePassword = properties != null ? properties.getProperty("keystore_pass", "robobo-pass") : "robobo-pass";
+        String keyPassword = properties != null ? properties.getProperty("key_pass", "robobo-pass") : "robobo-pass";
+        int wssPort = properties != null ? Integer.parseInt(properties.getProperty("wssport", "44304")) : 44304;
+
+        RoboboManifest manifest = null;
+        try (InputStream manifestStream = context.getAssets().open("manifest.json")) {
+            manifest = RoboboManifest.fromInputStream(manifestStream);
+        } catch (Exception e) {
+            // Optional manifest file
+        }
+
+        String targetRobotId = (roboboBTName != null && !roboboBTName.equals("ROB-???")) ? roboboBTName : (properties != null ? properties.getProperty("robot_id", properties.getProperty("robot_alias", null)) : null);
+
+        try {
+            InputStream bksIn = context.getResources().openRawResource(R.raw.robobo_local_ks);
+            SSLContext sslContext = SSLContextFactory.createSSLContextFromBks(
+                    bksIn,
+                    storePassword.toCharArray(),
+                    targetRobotId,
+                    manifest
+            );
+
+            this.webSocketSecureServer = new WebSocketServerImpl(wssPort);
+            this.webSocketSecureServer.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+            this.webSocketSecureServer.setReuseAddr(true);
+            this.webSocketSecureServer.start();
+
+            this.httpsServer = new RoboboHttpsServer(
+                    44300,
+                    context,
+                    R.raw.robobo_local_ks,
+                    storePassword,
+                    keyPassword,
+                    targetRobotId,
+                    manifest
+            );
+            this.httpsServer.start();
+
+            roboboManager.log(LogLvl.DEBUG, TAG, "WSS and HTTPS servers started using identity for: " + (targetRobotId != null ? targetRobotId : "default"));
+        } catch (Exception e) {
+            Log.e(TAG, "Error starting WSS and HTTPS servers", e);
+            roboboManager.log(LogLvl.ERROR, TAG, "Error starting WSS and HTTPS servers: " + e.getMessage());
+        }
     }
+
     @Override
     public void startup(RoboboManager manager) throws InternalErrorException {
 
@@ -405,23 +455,7 @@ public class WebsocketSecureRemoteControlModule implements IRemoteControlProxy, 
         this.webSocketServer.setReuseAddr(true);
         this.webSocketServer.start();
 
-        this.webSocketSecureServer= new WebSocketServerImpl(Integer.parseInt(properties.getProperty("wssport","44304")));
-        this.webSocketSecureServer.setWebSocketFactory( new DefaultSSLWebSocketServerFactory( getSSLConextFromAndroidKeystore(this.roboboManager.getApplicationContext()) ));
-        this.webSocketSecureServer.setReuseAddr(true);
-        this.webSocketSecureServer.start();
-
-        try {
-            this.httpsServer = new RoboboHttpsServer(
-                    44300,
-                    this.roboboManager.getApplicationContext(),
-                    R.raw.robobo_local_ks,
-                    properties.getProperty("keystore_pass"),
-                    properties.getProperty("key_pass")
-            );
-            httpsServer.start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        startWssServer();
     }
 
     @Override
