@@ -493,6 +493,6 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
 
     @Override
     public String getModuleVersion() {
-        return "1.1.1-SNAPSHOT";
+        return "1.5.0-SNAPSHOT";
     }
 }

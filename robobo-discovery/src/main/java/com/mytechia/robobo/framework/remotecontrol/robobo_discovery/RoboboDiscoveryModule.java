@@ -5,7 +5,7 @@ import com.mytechia.robobo.framework.RoboboManager;
 
 public class RoboboDiscoveryModule implements IRoboboDiscoveryModule{
     String TAG = "Robobo Discovery Module";
-    String version = "0.0.1-SNAPSHOT";
+    String version = "0.5.0-SNAPSHOT";
 
     private UDPInfoServer infoServer;
     private int bufferSize = 1024;

@@ -12,7 +12,7 @@ import com.mytechia.robobo.framework.RoboboManager;
 
 public class RemoteMDNSModule implements IRemoteMDNSModule {
     String TAG = "Robobo MDNS Module";
-    String version = "0.1.1-SNAPSHOT";
+    String version = "0.5.0-SNAPSHOT";
 
     private RoboboMDNSServer mdnsServer;
 
