@@ -133,7 +133,7 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
             // Iterate ver all the authenticated connections
             while (it.hasNext()) {
 
-                Map.Entry<InetSocketAddress, WebSocket> pair = (Map.Entry) it.next();
+                Map.Entry<Integer, WebSocket> pair = it.next();
                 WebSocket webSocket = pair.getValue();
 
                 // If the connection is closed, pass
@@ -373,7 +373,6 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
     @Override
     public void startWssServer() {
         if (roboboManager == null) {
-            Log.e(TAG, "Cannot start WSS server: RoboboManager is null.");
             return;
         }
 
@@ -401,14 +400,65 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
 
         String targetRobotId = roboboBTName;
 
+        InputStream p12In = null;
+        InputStream caIn = null;
+
         try {
-            InputStream bksIn = context.getResources().openRawResource(R.raw.robobo_local_ks);
-            SSLContext sslContext = SSLContextFactory.createSSLContextFromBks(
-                    bksIn,
-                    storePassword.toCharArray(),
-                    targetRobotId,
-                    manifest
-            );
+            // Load Root CA Certificate (ca.crt)
+            try {
+                caIn = context.getResources().openRawResource(R.raw.ca);
+            } catch (Exception e) {
+                try {
+                    caIn = context.getAssets().open("ca.crt");
+                } catch (Exception ignored) {}
+            }
+
+            // Find PKCS12 (.p12) file for targetRobotId
+            if (manifest != null && targetRobotId != null) {
+                RoboboManifest.RobotInfo robotInfo = manifest.getRobotInfo(targetRobotId);
+                if (robotInfo != null && robotInfo.p12File != null && !robotInfo.p12File.isEmpty()) {
+                    String p12FileName = robotInfo.p12File;
+
+                    String resName = p12FileName.endsWith(".p12") ?
+                            p12FileName.substring(0, p12FileName.length() - 4).replace("-", "_") :
+                            p12FileName.replace("-", "_");
+                    int resId = context.getResources().getIdentifier(resName, "raw", context.getPackageName());
+                    if (resId != 0) {
+                        try {
+                            p12In = context.getResources().openRawResource(resId);
+                        } catch (Exception ignored) {}
+                    }
+
+                    if (p12In == null) {
+                        try {
+                            p12In = context.getAssets().open("pkcs12/" + p12FileName);
+                        } catch (Exception e1) {
+                            try {
+                                p12In = context.getAssets().open(p12FileName);
+                            } catch (Exception e2) {
+                                try {
+                                    p12In = context.getAssets().open("raw/pkcs12/" + p12FileName);
+                                } catch (Exception ignored) {}
+                            }
+                        }
+                    }
+                }
+            }
+
+            SSLContext sslContext = null;
+            if (p12In != null) {
+                sslContext = SSLContextFactory.createSSLContextFromP12(
+                        p12In,
+                        storePassword.toCharArray(),
+                        caIn,
+                        targetRobotId,
+                        manifest
+                );
+            } else if (caIn != null) {
+                sslContext = SSLContextFactory.createSSLContextFromCaCertificate(caIn);
+            } else {
+                throw new IllegalStateException("Neither PKCS12 certificate nor Root CA certificate could be loaded for WSS server.");
+            }
 
             this.webSocketSecureServer = new WebSocketServerImpl(wssPort);
             this.webSocketSecureServer.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
@@ -419,6 +469,13 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
         } catch (Exception e) {
             Log.e(TAG, "Error starting WSS server", e);
             roboboManager.log(LogLvl.ERROR, TAG, "Error starting WSS server: " + e.getMessage());
+        } finally {
+            if (p12In != null) {
+                try { p12In.close(); } catch (IOException ignored) {}
+            }
+            if (caIn != null) {
+                try { caIn.close(); } catch (IOException ignored) {}
+            }
         }
     }
 
