@@ -81,9 +81,7 @@ public class RoboboManifest {
      * @return true if keys exist in the manifest, false otherwise.
      */
     public boolean isRobotAvailable(String robotIdOrAlias) {
-        if (robotIdOrAlias == null) return false;
-        return robots.containsKey(robotIdOrAlias.toUpperCase()) ||
-               robots.containsKey(robotIdOrAlias.toLowerCase());
+        return getRobotInfo(robotIdOrAlias) != null;
     }
 
     /**
@@ -94,6 +92,13 @@ public class RoboboManifest {
         RobotInfo info = robots.get(robotIdOrAlias.toUpperCase());
         if (info == null) {
             info = robots.get(robotIdOrAlias.toLowerCase());
+        }
+        if (info == null && robotIdOrAlias.toUpperCase().startsWith("ROB-")) {
+            String stripped = robotIdOrAlias.substring(4);
+            info = robots.get(stripped.toUpperCase());
+            if (info == null) {
+                info = robots.get(stripped.toLowerCase());
+            }
         }
         return info;
     }

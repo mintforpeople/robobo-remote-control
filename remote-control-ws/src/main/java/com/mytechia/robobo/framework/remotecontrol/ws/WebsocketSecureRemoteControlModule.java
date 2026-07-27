@@ -454,10 +454,8 @@ public class WebsocketSecureRemoteControlModule implements IWebsocketSecureRemot
                         targetRobotId,
                         manifest
                 );
-            } else if (caIn != null) {
-                sslContext = SSLContextFactory.createSSLContextFromCaCertificate(caIn);
             } else {
-                throw new IllegalStateException("Neither PKCS12 certificate nor Root CA certificate could be loaded for WSS server.");
+                throw new IllegalStateException("PKCS12 certificate identity could not be loaded for WSS server (target robot: " + targetRobotId + ").");
             }
 
             this.webSocketSecureServer = new WebSocketServerImpl(wssPort);

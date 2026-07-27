@@ -42,11 +42,17 @@ public class RoboboKeyManager extends X509ExtendedKeyManager {
 
     @Override
     public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket) {
+        if (chosenAlias != null) {
+            return chosenAlias;
+        }
         return delegate.chooseServerAlias(keyType, issuers, socket);
     }
 
     @Override
     public String chooseEngineServerAlias(String keyType, Principal[] issuers, SSLEngine engine) {
+        if (chosenAlias != null) {
+            return chosenAlias;
+        }
         if (delegate instanceof X509ExtendedKeyManager) {
             return ((X509ExtendedKeyManager) delegate).chooseEngineServerAlias(keyType, issuers, engine);
         }
